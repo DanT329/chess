@@ -1,5 +1,6 @@
 package chess;
 
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -40,6 +41,10 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         return this.board.get(position);
+    }
+
+    public HashMap<ChessPosition, ChessPiece> getBoard() {
+        return this.board;
     }
 
     /**
