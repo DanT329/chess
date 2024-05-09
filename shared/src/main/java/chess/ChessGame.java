@@ -51,7 +51,25 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        TeamColor checkTeam = board.getPiece(startPosition).getTeamColor();
+
+        //get list of every possible move
+        Collection<ChessMove> possibleMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
+        //save original HashMap board implementation
+        ChessBoard originalBoard = board.copy();
+        for(ChessMove move : possibleMoves) {
+            board = originalBoard.copy();
+            board.addPiece(move.getEndPosition(),board.getPiece(move.getStartPosition()));
+            board.removePiece(move.getStartPosition());
+
+            if(!isInCheck(checkTeam)){
+                validMoves.add(move);
+            }
+        }
+        //set board back to orginal
+        board = originalBoard.copy();
+        return validMoves;
     }
 
     /**
@@ -71,6 +89,9 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+
+        //first check is in checkMate;
+
         ChessPosition kingPosition = null;
         ArrayList<ChessPosition> enemyPieces = new ArrayList<>();
         HashMap<ChessPosition,ChessPiece> boardCheck = board.getBoard();
@@ -107,6 +128,10 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
+        //find all teamColor pieces
+        //add start positions to list
+        //call valid moves on each list item
+        //if any return !null, return false;
     }
 
     /**

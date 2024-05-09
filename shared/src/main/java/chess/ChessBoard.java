@@ -32,6 +32,10 @@ public class ChessBoard {
         this.board.put(position,piece);
     }
 
+    public void removePiece(ChessPosition position) {
+        this.board.remove(position);
+    }
+
     /**
      * Gets a chess piece on the chessboard
      *
@@ -46,6 +50,16 @@ public class ChessBoard {
     public HashMap<ChessPosition, ChessPiece> getBoard() {
         return this.board;
     }
+
+    // Copy constructor shallow
+    public ChessBoard(ChessBoard other) {
+        this.board = new HashMap<>(other.board);
+    }
+    // Method to create a copy of the board shallow
+    public ChessBoard copy() {
+        return new ChessBoard(this);
+    }
+
 
     /**
      * Sets the board to the default starting board
