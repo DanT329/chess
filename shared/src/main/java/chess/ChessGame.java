@@ -79,8 +79,40 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
-    }
+
+        //check if empty
+        if(!board.getBoard().containsKey(move.getStartPosition())){
+            throw new InvalidMoveException("No piece at position");
+        }
+            //check turn
+        if(board.getPiece(move.getStartPosition()).getTeamColor() != teamTurn){
+          throw new InvalidMoveException("Wrong turn");
+        }
+
+            ChessPosition startPosition = move.getStartPosition();
+            Collection<ChessMove> validMoves = validMoves(startPosition);
+            for (ChessMove validMove : validMoves) {
+                if (validMove.equals(move)) {
+                    //check if pawn
+                    //make move
+                    if(board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN
+                        && move.getPromotionPiece() != null){
+                        board.addPiece(move.getEndPosition(), new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(),move.getPromotionPiece()));
+                    }else{
+                        board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+                    }
+                    board.removePiece(move.getStartPosition());
+                    if(teamTurn == TeamColor.BLACK){
+                        teamTurn = TeamColor.WHITE;
+                    }else{
+                        teamTurn = TeamColor.BLACK;
+                    }
+                    return;
+                }
+            }
+            throw new InvalidMoveException();
+
+        }
 
     /**
      * Determines if the given team is in check
@@ -135,6 +167,7 @@ public class ChessGame {
         if (isInCheck(teamColor)) {
 
             //TODO: Write method in board to getFriendlyPieces. This code is repeated three times.
+
             HashMap<ChessPosition, ChessPiece> boardCheck = board.getBoard();
             ArrayList<ChessPosition> teamPieces = new ArrayList<>();
 
@@ -146,6 +179,8 @@ public class ChessGame {
                     teamPieces.add(position);
                 }
             }
+            //END OF REFACTOR BLOCK
+
             for(ChessPosition position : teamPieces){
                 if(!validMoves(position).isEmpty()) {
                     return false;
