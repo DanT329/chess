@@ -54,7 +54,7 @@ public class ChessGame {
         Collection<ChessMove> validMoves = new ArrayList<>();
         TeamColor checkTeam = board.getPiece(startPosition).getTeamColor();
 
-        //get list of every possible move
+        //get list of every possible move //
         Collection<ChessMove> possibleMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
         //save original HashMap board implementation
         ChessBoard originalBoard = board.copy();
