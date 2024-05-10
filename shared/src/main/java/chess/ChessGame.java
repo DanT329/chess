@@ -127,11 +127,33 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
         //find all teamColor pieces
         //add start positions to list
         //call valid moves on each list item
         //if any return !null, return false;
+
+        if (isInCheck(teamColor)) {
+
+            //TODO: Write method in board to getFriendlyPieces. This code is repeated three times.
+            HashMap<ChessPosition, ChessPiece> boardCheck = board.getBoard();
+            ArrayList<ChessPosition> teamPieces = new ArrayList<>();
+
+            for (HashMap.Entry<ChessPosition, ChessPiece> entry : boardCheck.entrySet()) {
+                ChessPosition position = entry.getKey();
+                ChessPiece piece = entry.getValue();
+
+                if (piece.getTeamColor() == teamColor) {
+                    teamPieces.add(position);
+                }
+            }
+            for(ChessPosition position : teamPieces){
+                if(!validMoves(position).isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -142,7 +164,30 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        //call any valid moves?
+        //call inCheckmate?
+        // if no to both, return true;
+        if (isInCheck(teamColor) || isInCheckmate(teamColor)) {
+            return false;
+        }else{
+            HashMap<ChessPosition, ChessPiece> boardCheck = board.getBoard();
+            ArrayList<ChessPosition> teamPieces = new ArrayList<>();
+
+            for (HashMap.Entry<ChessPosition, ChessPiece> entry : boardCheck.entrySet()) {
+                ChessPosition position = entry.getKey();
+                ChessPiece piece = entry.getValue();
+
+                if (piece.getTeamColor() == teamColor) {
+                    teamPieces.add(position);
+                }
+            }
+            for(ChessPosition position : teamPieces){
+                if(!validMoves(position).isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     /**
