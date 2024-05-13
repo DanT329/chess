@@ -165,22 +165,7 @@ public class ChessGame {
         //if any return !null, return false;
 
         if (isInCheck(teamColor)) {
-
-            //TODO: Write method in board to getFriendlyPieces. This code is repeated three times.
-
-            HashMap<ChessPosition, ChessPiece> boardCheck = board.getBoard();
-            ArrayList<ChessPosition> teamPieces = new ArrayList<>();
-
-            for (HashMap.Entry<ChessPosition, ChessPiece> entry : boardCheck.entrySet()) {
-                ChessPosition position = entry.getKey();
-                ChessPiece piece = entry.getValue();
-
-                if (piece.getTeamColor() == teamColor) {
-                    teamPieces.add(position);
-                }
-            }
-            //END OF REFACTOR BLOCK
-
+            ArrayList<ChessPosition> teamPieces = findFriendlyPieces(teamColor);
             for(ChessPosition position : teamPieces){
                 if(!validMoves(position).isEmpty()) {
                     return false;
@@ -191,6 +176,17 @@ public class ChessGame {
         return false;
     }
 
+    private ArrayList<ChessPosition> findFriendlyPieces(TeamColor friendlyColor) {
+        ArrayList<ChessPosition> friendlyPieces = new ArrayList<>();
+        for (HashMap.Entry<ChessPosition, ChessPiece> entry : board.getBoard().entrySet()) {
+            ChessPosition position = entry.getKey();
+            ChessPiece piece = entry.getValue();
+            if(piece.getTeamColor() == friendlyColor) {
+                friendlyPieces.add(position);
+            }
+        }
+        return friendlyPieces;
+    }
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves
