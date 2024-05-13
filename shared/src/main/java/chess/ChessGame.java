@@ -201,17 +201,7 @@ public class ChessGame {
         if (isInCheck(teamColor) || isInCheckmate(teamColor)) {
             return false;
         }else{
-            HashMap<ChessPosition, ChessPiece> boardCheck = board.getBoard();
-            ArrayList<ChessPosition> teamPieces = new ArrayList<>();
-
-            for (HashMap.Entry<ChessPosition, ChessPiece> entry : boardCheck.entrySet()) {
-                ChessPosition position = entry.getKey();
-                ChessPiece piece = entry.getValue();
-
-                if (piece.getTeamColor() == teamColor) {
-                    teamPieces.add(position);
-                }
-            }
+            ArrayList<ChessPosition> teamPieces = findFriendlyPieces(teamColor);
             for(ChessPosition position : teamPieces){
                 if(!validMoves(position).isEmpty()) {
                     return false;
