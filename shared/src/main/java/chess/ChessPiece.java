@@ -53,25 +53,32 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-
         Collection<ChessMove> moves = new HashSet<>();
 
-        //BISHOP MOVE SET
-        if (this.getPieceType() == PieceType.BISHOP) {
-            moves = BishopMoveCalc.staticMove(board,myPosition,this.pieceColor);
-        }else if(this.getPieceType() == PieceType.KING){
-            moves = KingMoveCalc.staticMove(board,myPosition,this.pieceColor);
-        }else if(this.getPieceType() == PieceType.KNIGHT){
-            moves = KnightMoveCalc.staticMove(board,myPosition,this.pieceColor);
-        }else if(this.getPieceType() == PieceType.ROOK){
-            moves = RookMoveCalc.staticMove(board,myPosition,this.pieceColor);
-        }else if(this.getPieceType() == PieceType.QUEEN){
-            moves = QueenMoveCalc.staticMove(board,myPosition,this.pieceColor);
-        }else if(this.getPieceType() == PieceType.PAWN){
-            moves = PawnMoveCalc.staticMove(board,myPosition,this.pieceColor);
+        switch (this.getPieceType()) {
+            case BISHOP:
+                moves = BishopMoveCalc.staticMove(board, myPosition, this.pieceColor);
+                break;
+            case KING:
+                moves = KingMoveCalc.staticMove(board, myPosition, this.pieceColor);
+                break;
+            case KNIGHT:
+                moves = KnightMoveCalc.staticMove(board, myPosition, this.pieceColor);
+                break;
+            case ROOK:
+                moves = RookMoveCalc.staticMove(board, myPosition, this.pieceColor);
+                break;
+            case QUEEN:
+                moves = QueenMoveCalc.staticMove(board, myPosition, this.pieceColor);
+                break;
+            case PAWN:
+                moves = PawnMoveCalc.staticMove(board, myPosition, this.pieceColor);
+                break;
         }
+
         return moves;
     }
+
 
     @Override
     public boolean equals(Object o) {
