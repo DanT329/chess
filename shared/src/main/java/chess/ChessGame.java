@@ -80,11 +80,11 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
-        //check if empty
+
         if(!board.getBoard().containsKey(move.getStartPosition())){
             throw new InvalidMoveException("No piece at position");
         }
-            //check turn
+
         if(board.getPiece(move.getStartPosition()).getTeamColor() != teamTurn){
           throw new InvalidMoveException("Wrong turn");
         }
@@ -122,8 +122,6 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
 
-        //first check is in checkMate;
-
         ChessPosition kingPosition = null;
         ArrayList<ChessPosition> enemyPieces = new ArrayList<>();
         HashMap<ChessPosition,ChessPiece> boardCheck = board.getBoard();
@@ -159,11 +157,6 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        //find all teamColor pieces
-        //add start positions to list
-        //call valid moves on each list item
-        //if any return !null, return false;
-
         if (isInCheck(teamColor)) {
             ArrayList<ChessPosition> teamPieces = findFriendlyPieces(teamColor);
             for(ChessPosition position : teamPieces){
@@ -195,9 +188,6 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        //call any valid moves?
-        //call inCheckmate?
-        // if no to both, return true;
         if (isInCheck(teamColor) || isInCheckmate(teamColor)) {
             return false;
         }else{
