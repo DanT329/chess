@@ -50,3 +50,5 @@ java -jar client/target/client-jar-with-dependencies.jar
 
 ♕ 240 Chess Client: chess.ChessPiece@7852e922
 ```
+## Sequence Diagram
+![Phase2 Sequence Diagram](https://github.com/DanT329/chess/blob/main/Phase2.png)
