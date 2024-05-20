@@ -2,18 +2,31 @@ package dataaccess;
 
 import model.UserData;
 import java.util.ArrayList;
-public class DataAccessMemoryUser implements DataAccessUser{
-    final private ArrayList<UserData> users = new ArrayList<>();
+
+public class DataAccessMemoryUser implements DataAccessUser {
+    private static DataAccessMemoryUser instance;
+    private final ArrayList<UserData> users = new ArrayList<>();
+
+    private DataAccessMemoryUser() {
+        // private constructor to prevent instantiation
+    }
+
+    public static synchronized DataAccessMemoryUser getInstance() {
+        if (instance == null) {
+            instance = new DataAccessMemoryUser();
+        }
+        return instance;
+    }
 
     @Override
-    public  void clear(){
+    public void clear() {
         users.clear();
     }
 
     @Override
-    public UserData getUser(UserData user){
-        for(UserData userData : users){
-            if(userData.username().equals(user.username())){
+    public UserData getUser(UserData user) {
+        for (UserData userData : users) {
+            if (userData.username().equals(user.username())) {
                 return userData;
             }
         }
@@ -30,14 +43,14 @@ public class DataAccessMemoryUser implements DataAccessUser{
     }
 
     @Override
-    public UserData verifyUser(UserData user){
+    public UserData verifyUser(UserData user) {
         UserData checkUser = getUser(user);
-        if(checkUser != null
+        if (checkUser != null
                 && checkUser.username().equals(user.username())
-                && checkUser.password().equals(user.password())){
+                && checkUser.password().equals(user.password())) {
             return checkUser;
         }
         return null;
     }
-
 }
+
