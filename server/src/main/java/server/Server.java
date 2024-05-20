@@ -5,6 +5,9 @@ import model.UserData;
 import com.google.gson.Gson;
 import service.UserService;
 import model.ResponseMessage;
+import service.AlreadyTakenException;
+import service.BadRequestException;
+import service.GeneralFailureException;
 
 import spark.*;
 
@@ -15,17 +18,24 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here
         Spark.post("/user", (req, res) -> {
-            UserData user = new Gson().fromJson(req.body(), UserData.class);
-            AuthData authData = userService.register(user);
+            try {
+                UserData user = new Gson().fromJson(req.body(), UserData.class);
+                AuthData authData = userService.register(user);
 
-            if (authData != null) {
-                res.status(200); // Created
+                res.status(200); // OK
                 return new Gson().toJson(authData);
-            } else {
-                res.status(403); // Bad Request, e.g., user already exists
-                ResponseMessage responseMessage = new ResponseMessage("Error: already taken");
+            } catch (BadRequestException e) {
+                res.status(400); // Bad Request
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            } catch (AlreadyTakenException e) {
+                res.status(403); // Already taken
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            } catch (GeneralFailureException e) {
+                res.status(500); // Internal Server Error
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
                 return new Gson().toJson(responseMessage);
             }
         });
