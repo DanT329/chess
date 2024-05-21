@@ -3,11 +3,8 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import com.google.gson.Gson;
-import service.UserService;
+import service.*;
 import model.ResponseMessage;
-import service.AlreadyTakenException;
-import service.BadRequestException;
-import service.GeneralFailureException;
 
 import spark.*;
 
@@ -35,6 +32,23 @@ public class Server {
                 return new Gson().toJson(responseMessage);
             } catch (GeneralFailureException e) {
                 res.status(500); // Internal Server Error
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }
+        });
+
+        Spark.post("/session", (req,res) -> {
+            try{
+                UserData user = new Gson().fromJson(req.body(), UserData.class);
+                AuthData authData = userService.login(user);
+                res.status(200);
+                return new Gson().toJson(authData);
+            }catch(UnauthorizedException e){
+                res.status(401);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }catch(GeneralFailureException e){
+                res.status(500);
                 ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
                 return new Gson().toJson(responseMessage);
             }

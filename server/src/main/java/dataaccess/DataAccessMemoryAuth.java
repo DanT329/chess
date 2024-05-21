@@ -1,4 +1,7 @@
 package dataaccess;
+import java.util.UUID;
+import java.security.SecureRandom;
+import java.util.Random;
 
 import model.AuthData;
 import model.UserData;
@@ -24,15 +27,17 @@ public class DataAccessMemoryAuth implements DataAccessAuth{
         authList.clear();
     }
 
-    public AuthData createAuth(UserData user) throws DataAccessException{
-        AuthData newAuth = new AuthData("1234",user.username());
-        if(!authList.contains(newAuth)){
+    public AuthData createAuth(UserData user) throws DataAccessException {
+        String authToken = UUID.randomUUID().toString();
+        AuthData newAuth = new AuthData(authToken, user.username());
+        if (!authList.contains(newAuth)) {
             authList.add(newAuth);
             return newAuth;
-        }else{
+        } else {
             throw new DataAccessException("User already exists");
         }
     }
+
 }
 
 

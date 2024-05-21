@@ -30,6 +30,21 @@ public class UserService {
             throw new GeneralFailureException("Registration failed: " + e.getMessage());
         }
     }
+
+    public AuthData login(UserData user) throws UnauthorizedException,GeneralFailureException{
+        try{
+            UserData loginAttempt = dataAccessUser.verifyUser(user);
+            if(loginAttempt == null){
+                throw new UnauthorizedException("unauthorized");
+            }
+
+            return dataAccessAuth.createAuth(loginAttempt);
+
+        }catch(DataAccessException e){
+            throw new GeneralFailureException("Login failed: " + e.getMessage());
+        }
+
+    }
 }
 
 
