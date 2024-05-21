@@ -5,6 +5,7 @@ import model.UserData;
 import com.google.gson.Gson;
 import service.*;
 import model.ResponseMessage;
+import com.google.gson.JsonObject;
 
 import spark.*;
 
@@ -43,6 +44,23 @@ public class Server {
                 AuthData authData = userService.login(user);
                 res.status(200);
                 return new Gson().toJson(authData);
+            }catch(UnauthorizedException e){
+                res.status(401);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }catch(GeneralFailureException e){
+                res.status(500);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }
+        });
+
+        Spark.delete("/session", (req,res) -> {
+            try {
+                String authToken = req.headers("authorization");
+                userService.logout(authToken);
+                res.status(200);
+                return new Gson().toJson(new JsonObject());
             }catch(UnauthorizedException e){
                 res.status(401);
                 ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());

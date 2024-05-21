@@ -45,6 +45,18 @@ public class UserService {
         }
 
     }
+
+    public void logout(String authToken) throws UnauthorizedException, GeneralFailureException{
+        try{
+            AuthData user = dataAccessAuth.verifyToken(authToken);
+            if(user == null){
+                throw new UnauthorizedException("unauthorized");
+            }
+            dataAccessAuth.deleteAuth(user);
+        }catch(DataAccessException e){
+            throw new GeneralFailureException("Logout failed: " + e.getMessage());
+        }
+    }
 }
 
 

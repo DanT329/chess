@@ -38,6 +38,19 @@ public class DataAccessMemoryAuth implements DataAccessAuth{
         }
     }
 
+    public AuthData verifyToken(String authToken) throws DataAccessException {
+        for(AuthData auth : authList) {
+            if(auth.authToken().equals(authToken)) {
+                return auth;
+            }
+        }
+        return null;
+    }
+
+    public void deleteAuth(AuthData auth) throws DataAccessException {
+        authList.remove(auth);
+    }
+
 }
 
 
