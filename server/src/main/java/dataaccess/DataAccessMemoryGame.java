@@ -2,7 +2,10 @@ package dataaccess;
 
 import model.AuthData;
 import model.GameData;
+import service.AlreadyTakenException;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.UUID;
 import java.security.SecureRandom;
 import java.util.Random;
@@ -47,4 +50,44 @@ public class DataAccessMemoryGame implements DataAccessGame{
         }
         throw new DataAccessException("Game already exists");
     }
+
+    public Collection<GameData> getAllGames() throws DataAccessException {
+        return new ArrayList<>(gameList);
+    }
+
+    public void updateGame(GameData updatedGameData) throws DataAccessException, AlreadyTakenException {
+        for (int i = 0; i < gameList.size(); i++) {
+            GameData gameData = gameList.get(i);
+            if (gameData.gameID() == updatedGameData.gameID()) {
+                // Create a new GameData record with updated values
+                GameData updatedGame;
+                if(updatedGameData.blackUsername() == null && gameData.whiteUsername() == null){
+                            updatedGame = new GameData(
+                            gameData.gameID(),
+                            updatedGameData.whiteUsername(),
+                            gameData.blackUsername(),
+                            gameData.gameName(),
+                            gameData.game()
+                    );
+                }else if(updatedGameData.whiteUsername() == null && gameData.blackUsername() == null){
+                            updatedGame = new GameData(
+                            gameData.gameID(),
+                            gameData.whiteUsername(),
+                            updatedGameData.blackUsername(),
+                            gameData.gameName(),
+                            gameData.game()
+                    );
+                }else{
+                    throw new AlreadyTakenException("already taken");
+                }
+
+
+                // Replace the old record with the new one
+                gameList.set(i, updatedGame);
+                return;
+            }
+        }
+        throw new DataAccessException("Game not found");
+    }
+
 }

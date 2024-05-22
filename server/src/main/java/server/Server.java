@@ -3,6 +3,7 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import model.GameData;
+import model.GameWrapper;
 import com.google.gson.Gson;
 import service.*;
 import model.ResponseMessage;
@@ -10,9 +11,13 @@ import com.google.gson.JsonObject;
 
 import spark.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class Server {
     private final UserService userService = new UserService();
     private final GameService gameService = new GameService();
+    private final AppService appService = new AppService();
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -95,9 +100,59 @@ public class Server {
             }
         });
 
+        Spark.get("/game", (req,res)->{
+            try{
+                Collection<GameData> gameList = gameService.listGames(req.headers("authorization"));
+                res.status(200);
+                GameWrapper gameListWrapper = new GameWrapper(gameList);
+                return new Gson().toJson(gameListWrapper);
+            }catch(UnauthorizedException e){
+                res.status(401);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }catch(GeneralFailureException e){
+                res.status(500);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }
+        });
+
+        Spark.put("/game",(req,res)->{
+            try{
+                String authToken = req.headers("authorization");
+                GameJoinUser userInfo = new Gson().fromJson(req.body(), GameJoinUser.class);
+                gameService.updateGamePlayer(userInfo,authToken);
+                res.status(200);
+                return new Gson().toJson(new JsonObject());
+            }catch(UnauthorizedException e){
+                res.status(401);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }catch(GeneralFailureException e){
+                res.status(500);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }catch(AlreadyTakenException e){
+                res.status(403);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }catch(BadRequestException e){
+                res.status(400);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }
+        });
         Spark.delete("/db", (req, res) -> {
-            res.status(200); // Always return 200 OK
-            return ""; // Return an empty response body
+            try{
+                appService.resetApp();
+                res.status(200);
+                return new Gson().toJson(new JsonObject());
+            }catch(DataAccessException e){
+                res.status(500);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }
+
         });
 
 

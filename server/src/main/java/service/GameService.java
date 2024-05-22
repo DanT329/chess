@@ -1,11 +1,11 @@
 package service;
 
-import dataaccess.DataAccessMemoryUser;
-import dataaccess.DataAccessMemoryAuth;
-import dataaccess.DataAccessMemoryGame;
-import dataaccess.DataAccessException;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
+import server.GameJoinUser;
+
+import java.util.Collection;
 
 public class GameService {
     private final DataAccessMemoryUser dataAccessUser = DataAccessMemoryUser.getInstance();
@@ -26,5 +26,38 @@ public class GameService {
         }catch(DataAccessException e){
             throw new GeneralFailureException(e.getMessage());
         }
+    }
+
+    public Collection<GameData> listGames(String authToken) throws GeneralFailureException, UnauthorizedException {
+        try{
+            AuthData auth = dataAccessAuth.verifyToken(authToken);
+            return dataAccessGame.getAllGames();
+        }catch(DataAccessException e){
+            throw new GeneralFailureException(e.getMessage());
+        }
+    }
+
+    public void updateGamePlayer(GameJoinUser gameInfo,String authToken) throws GeneralFailureException, UnauthorizedException, BadRequestException, AlreadyTakenException {
+        try{
+            AuthData auth = dataAccessAuth.verifyToken(authToken);
+            if(auth == null){
+                throw new UnauthorizedException("unauthorized");
+            }
+            if(gameInfo.playerColor() == null || gameInfo.gameID() == 0){
+                throw new BadRequestException("bad request");
+            }
+            GameData game;
+            if(gameInfo.playerColor().equals("WHITE")){
+                game = new GameData(gameInfo.gameID(),auth.username(),null,null, null);
+            }else{
+                game = new GameData(gameInfo.gameID(), null, auth.username(), null, null);
+            }
+
+            dataAccessGame.updateGame(game);
+
+        }catch(DataAccessException e){
+            throw new GeneralFailureException(e.getMessage());
+        }
+
     }
 }
