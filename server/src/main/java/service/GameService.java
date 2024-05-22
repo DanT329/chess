@@ -31,6 +31,9 @@ public class GameService {
     public Collection<GameData> listGames(String authToken) throws GeneralFailureException, UnauthorizedException {
         try{
             AuthData auth = dataAccessAuth.verifyToken(authToken);
+            if(auth == null){
+                throw new UnauthorizedException("unauthorized");
+            }
             return dataAccessGame.getAllGames();
         }catch(DataAccessException e){
             throw new GeneralFailureException(e.getMessage());
