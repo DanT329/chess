@@ -2,6 +2,7 @@ package server;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
+import model.GameData;
 import com.google.gson.Gson;
 import service.*;
 import model.ResponseMessage;
@@ -11,6 +12,7 @@ import spark.*;
 
 public class Server {
     private final UserService userService = new UserService();
+    private final GameService gameService = new GameService();
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -67,6 +69,27 @@ public class Server {
                 return new Gson().toJson(responseMessage);
             }catch(GeneralFailureException e){
                 res.status(500);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }
+        });
+
+        Spark.post("/game", (req,res)->{
+            try{
+             String authToken = req.headers("authorization");
+             GameData game = new Gson().fromJson(req.body(), GameData.class);
+             GameData newGame = gameService.createGame(game,authToken);
+             return new Gson().toJson(newGame);
+            }catch(UnauthorizedException e){
+                res.status(401);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }catch(GeneralFailureException e){
+                res.status(500);
+                ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
+                return new Gson().toJson(responseMessage);
+            }catch(BadRequestException e){
+                res.status(400);
                 ResponseMessage responseMessage = new ResponseMessage("Error: " + e.getMessage());
                 return new Gson().toJson(responseMessage);
             }
