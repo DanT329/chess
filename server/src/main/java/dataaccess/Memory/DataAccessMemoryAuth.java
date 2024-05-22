@@ -1,14 +1,14 @@
-package dataaccess;
+package dataaccess.Memory;
 import java.util.UUID;
-import java.security.SecureRandom;
-import java.util.Random;
 
+import dataaccess.DataAccessAuth;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 
 import java.util.ArrayList;
 
-public class DataAccessMemoryAuth implements DataAccessAuth{
+public class DataAccessMemoryAuth implements DataAccessAuth {
     private static DataAccessMemoryAuth instance;
     final private ArrayList<AuthData> authList = new ArrayList<>();
 

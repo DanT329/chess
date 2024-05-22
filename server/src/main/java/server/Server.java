@@ -9,9 +9,12 @@ import service.*;
 import model.ResponseMessage;
 import com.google.gson.JsonObject;
 
+import service.Exception.AlreadyTakenException;
+import service.Exception.BadRequestException;
+import service.Exception.GeneralFailureException;
+import service.Exception.UnauthorizedException;
 import spark.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class Server {

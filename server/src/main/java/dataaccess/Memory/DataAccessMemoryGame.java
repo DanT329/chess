@@ -1,16 +1,14 @@
-package dataaccess;
+package dataaccess.Memory;
 
-import model.AuthData;
+import dataaccess.DataAccessException;
+import dataaccess.DataAccessGame;
 import model.GameData;
-import service.AlreadyTakenException;
+import service.Exception.AlreadyTakenException;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.UUID;
-import java.security.SecureRandom;
-import java.util.Random;
 
-public class DataAccessMemoryGame implements DataAccessGame{
+public class DataAccessMemoryGame implements DataAccessGame {
     private static DataAccessMemoryGame instance;
     final private ArrayList<GameData> gameList = new ArrayList<>();
     private int nextGameId = 1;

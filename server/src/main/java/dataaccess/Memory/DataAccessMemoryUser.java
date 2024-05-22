@@ -1,5 +1,7 @@
-package dataaccess;
+package dataaccess.Memory;
 
+import dataaccess.DataAccessException;
+import dataaccess.DataAccessUser;
 import model.UserData;
 import java.util.ArrayList;
 

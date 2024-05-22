@@ -1,10 +1,14 @@
 package service;
 
-import dataaccess.DataAccessMemoryUser;
-import dataaccess.DataAccessMemoryAuth;
+import dataaccess.Memory.DataAccessMemoryUser;
+import dataaccess.Memory.DataAccessMemoryAuth;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
+import service.Exception.AlreadyTakenException;
+import service.Exception.BadRequestException;
+import service.Exception.GeneralFailureException;
+import service.Exception.UnauthorizedException;
 
 public class UserService {
     private final DataAccessMemoryUser dataAccessUser = DataAccessMemoryUser.getInstance();

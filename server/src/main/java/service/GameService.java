@@ -1,18 +1,23 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.Memory.DataAccessMemoryAuth;
+import dataaccess.Memory.DataAccessMemoryGame;
 import model.AuthData;
 import model.GameData;
 import server.GameJoinUser;
+import service.Exception.AlreadyTakenException;
+import service.Exception.BadRequestException;
+import service.Exception.GeneralFailureException;
+import service.Exception.UnauthorizedException;
 
 import java.util.Collection;
 
 public class GameService {
-    private final DataAccessMemoryUser dataAccessUser = DataAccessMemoryUser.getInstance();
     private final DataAccessMemoryAuth dataAccessAuth = DataAccessMemoryAuth.getInstance();
     private final DataAccessMemoryGame dataAccessGame = DataAccessMemoryGame.getInstance();
 
-    public GameData createGame(GameData game, String authToken) throws BadRequestException,GeneralFailureException,UnauthorizedException {
+    public GameData createGame(GameData game, String authToken) throws BadRequestException, GeneralFailureException, UnauthorizedException {
         if(game.gameName() == null || game.gameName().isEmpty()){
             throw new BadRequestException("bad request");
         }
