@@ -158,13 +158,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor)) {
-            ArrayList<ChessPosition> teamPieces = findFriendlyPieces(teamColor);
-            for(ChessPosition position : teamPieces){
-                if(!validMoves(position).isEmpty()) {
-                    return false;
-                }
-            }
-            return true;
+            return !hasValidMoves(teamColor);
         }
         return false;
     }
@@ -187,18 +181,9 @@ public class ChessGame {
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
      */
+
     public boolean isInStalemate(TeamColor teamColor) {
-        if (isInCheck(teamColor)) {
-            return false;
-        }else{
-            ArrayList<ChessPosition> teamPieces = findFriendlyPieces(teamColor);
-            for(ChessPosition position : teamPieces){
-                if(!validMoves(position).isEmpty()) {
-                    return false;
-                }
-            }
-            return true;
-        }
+        return !isInCheck(teamColor) && !hasValidMoves(teamColor);
     }
 
     /**
@@ -217,5 +202,15 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return this.board;
+    }
+
+    public boolean hasValidMoves(TeamColor teamColor) {
+        ArrayList<ChessPosition> teamPieces = findFriendlyPieces(teamColor);
+        for (ChessPosition position : teamPieces) {
+            if (!validMoves(position).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
