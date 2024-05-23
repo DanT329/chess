@@ -54,5 +54,9 @@ public class DataAccessMemoryUser implements DataAccessUser {
         }
         return null;
     }
+    // Package-private method for testing
+    public boolean isEmpty() {
+        return users.isEmpty();
+    }
 }
 
