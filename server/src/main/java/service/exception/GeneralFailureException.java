@@ -1,4 +1,4 @@
-package service.Exception;
+package service.exception;
 
 public class GeneralFailureException extends Exception {
     public GeneralFailureException(String message) {

@@ -2,9 +2,9 @@ package service;
 
 import model.UserData;
 import model.GameData;
-import dataaccess.Memory.DataAccessMemoryUser;
-import dataaccess.Memory.DataAccessMemoryAuth;
-import dataaccess.Memory.DataAccessMemoryGame;
+import dataaccess.memory.DataAccessMemoryUser;
+import dataaccess.memory.DataAccessMemoryAuth;
+import dataaccess.memory.DataAccessMemoryGame;
 import dataaccess.DataAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

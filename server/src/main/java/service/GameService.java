@@ -1,15 +1,15 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.Memory.DataAccessMemoryAuth;
-import dataaccess.Memory.DataAccessMemoryGame;
+import dataaccess.memory.DataAccessMemoryAuth;
+import dataaccess.memory.DataAccessMemoryGame;
 import model.AuthData;
 import model.GameData;
 import server.GameJoinUser;
-import service.Exception.AlreadyTakenException;
-import service.Exception.BadRequestException;
-import service.Exception.GeneralFailureException;
-import service.Exception.UnauthorizedException;
+import service.exception.AlreadyTakenException;
+import service.exception.BadRequestException;
+import service.exception.GeneralFailureException;
+import service.exception.UnauthorizedException;
 
 import java.util.Collection;
 

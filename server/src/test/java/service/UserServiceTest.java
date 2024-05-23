@@ -2,15 +2,15 @@ package service;
 
 import model.UserData;
 import model.AuthData;
-import dataaccess.Memory.DataAccessMemoryUser;
-import dataaccess.Memory.DataAccessMemoryAuth;
-import dataaccess.Memory.DataAccessMemoryGame;
-import service.Exception.AlreadyTakenException;
-import service.Exception.BadRequestException;
-import service.Exception.GeneralFailureException;
+import dataaccess.memory.DataAccessMemoryUser;
+import dataaccess.memory.DataAccessMemoryAuth;
+import dataaccess.memory.DataAccessMemoryGame;
+import service.exception.AlreadyTakenException;
+import service.exception.BadRequestException;
+import service.exception.GeneralFailureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.Exception.UnauthorizedException;
+import service.exception.UnauthorizedException;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTest {

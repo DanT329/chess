@@ -1,4 +1,4 @@
-package dataaccess.Memory;
+package dataaccess.memory;
 import java.util.UUID;
 
 import dataaccess.DataAccessAuth;

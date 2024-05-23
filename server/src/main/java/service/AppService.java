@@ -1,7 +1,7 @@
 package service;
-import dataaccess.Memory.DataAccessMemoryUser;
-import dataaccess.Memory.DataAccessMemoryAuth;
-import dataaccess.Memory.DataAccessMemoryGame;
+import dataaccess.memory.DataAccessMemoryUser;
+import dataaccess.memory.DataAccessMemoryAuth;
+import dataaccess.memory.DataAccessMemoryGame;
 import dataaccess.DataAccessException;
 
 

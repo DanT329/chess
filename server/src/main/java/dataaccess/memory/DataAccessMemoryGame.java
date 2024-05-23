@@ -1,9 +1,9 @@
-package dataaccess.Memory;
+package dataaccess.memory;
 
 import dataaccess.DataAccessException;
 import dataaccess.DataAccessGame;
 import model.GameData;
-import service.Exception.AlreadyTakenException;
+import service.exception.AlreadyTakenException;
 
 import java.util.ArrayList;
 import java.util.Collection;
