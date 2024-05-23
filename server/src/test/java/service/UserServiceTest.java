@@ -2,14 +2,12 @@ package service;
 
 import model.UserData;
 import model.AuthData;
-import model.GameData;
 import dataaccess.Memory.DataAccessMemoryUser;
 import dataaccess.Memory.DataAccessMemoryAuth;
 import dataaccess.Memory.DataAccessMemoryGame;
 import service.Exception.AlreadyTakenException;
 import service.Exception.BadRequestException;
 import service.Exception.GeneralFailureException;
-import dataaccess.DataAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.Exception.UnauthorizedException;
