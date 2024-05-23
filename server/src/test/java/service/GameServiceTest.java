@@ -7,13 +7,14 @@ import dataaccess.Memory.DataAccessMemoryUser;
 import dataaccess.Memory.DataAccessMemoryAuth;
 import dataaccess.Memory.DataAccessMemoryGame;
 import dataaccess.DataAccessException;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.Exception.AlreadyTakenException;
 import service.Exception.BadRequestException;
 import service.Exception.GeneralFailureException;
 import service.Exception.UnauthorizedException;
+import server.GameJoinUser;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class GameServiceTest {
@@ -43,5 +44,50 @@ public class GameServiceTest {
         UserData newUser = new UserData("Jerry","12345","jerry@gmail.com");
         AuthData newAuth = userService.register(newUser);
         assertThrows(BadRequestException.class,()-> gameService.createGame(new GameData(0,null,null,null,null),newAuth.authToken()));
+    }
+
+    @Test
+    public void listGamesGood() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException, GeneralFailureException {
+        UserData newUser = new UserData("Jerry","12345","jerry@gmail.com");
+        AuthData newAuth = userService.register(newUser);
+        gameService.createGame(new GameData(0,null,null,"MyGame",null),newAuth.authToken());
+        gameService.createGame(new GameData(0,null,null,"MyGameTwo",null),newAuth.authToken());
+        ArrayList<GameData> expected = new ArrayList<>();
+        expected.add(new GameData(1,null,null,"MyGame",null));
+        expected.add(new GameData(2,null,null,"MyGameTwo",null));
+        assertEquals(expected,gameService.listGames(newAuth.authToken()));
+    }
+
+    @Test
+    public void listGamesBadToken() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException, GeneralFailureException {
+        UserData newUser = new UserData("Jerry","12345","jerry@gmail.com");
+        userService.register(newUser);
+        assertThrows(UnauthorizedException.class,()->gameService.listGames("badToken"));
+    }
+
+    @Test
+    public void updateGameGood() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException, GeneralFailureException {
+        UserData newUser = new UserData("Jerry","12345","jerry@gmail.com");
+        AuthData newAuth = userService.register(newUser);
+        gameService.createGame(new GameData(0,null,null,"MyGame",null),newAuth.authToken());
+        gameService.createGame(new GameData(0,null,null,"MyGameTwo",null),newAuth.authToken());
+        gameService.updateGamePlayer(new GameJoinUser("WHITE",1,newAuth.authToken()), newAuth.authToken());
+
+        ArrayList<GameData> expected = new ArrayList<>();
+        expected.add(new GameData(1,"Jerry",null,"MyGame",null));
+        expected.add(new GameData(2,null,null,"MyGameTwo",null));
+        assertEquals(expected,gameService.listGames(newAuth.authToken()));
+    }
+
+    @Test
+    public void updateGameAlreadyTaken() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException, GeneralFailureException {
+        UserData newUser = new UserData("Jerry","12345","jerry@gmail.com");
+        AuthData newAuth = userService.register(newUser);
+        gameService.createGame(new GameData(0,null,null,"MyGame",null),newAuth.authToken());
+        gameService.createGame(new GameData(0,null,null,"MyGameTwo",null),newAuth.authToken());
+        gameService.updateGamePlayer(new GameJoinUser("WHITE",1,newAuth.authToken()), newAuth.authToken());
+
+
+        assertThrows(AlreadyTakenException.class,()-> gameService.updateGamePlayer(new GameJoinUser("WHITE",1,newAuth.authToken()), newAuth.authToken()));
     }
 }
