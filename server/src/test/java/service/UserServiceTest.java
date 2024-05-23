@@ -52,7 +52,6 @@ public class UserServiceTest {
         UserData newUser = new UserData("Jerry", "12345", "jerry@gmail.com");
         AuthData expectedAuth = userService.register(newUser);
         AuthData actualAuth = userService.login(newUser);
-
         assertEquals(expectedAuth.username(),actualAuth.username());
 
     }
@@ -61,9 +60,27 @@ public class UserServiceTest {
     public void testLoginWrongPassword() throws BadRequestException, AlreadyTakenException, GeneralFailureException, UnauthorizedException {
         UserData newUser = new UserData("Jerry", "12345", "jerry@gmail.com");
         UserData loginAttempt = new UserData("Jerry", "abcd", null);
-        AuthData expectedAuth = userService.register(newUser);
-
+        userService.register(newUser);
         assertThrows(UnauthorizedException.class, ()-> userService.login(loginAttempt));
+
+    }
+
+    @Test
+    public void testLogoutGood() throws BadRequestException, AlreadyTakenException, GeneralFailureException, UnauthorizedException {
+        UserData newUser = new UserData("Jerry", "12345", "jerry@gmail.com");
+        AuthData userAuth = userService.register(newUser);
+        userService.logout(userAuth.authToken());
+        assertTrue(DataAccessMemoryAuth.getInstance().isEmpty());
+
+    }
+
+    @Test
+    public void testLogoutBadToken() throws BadRequestException, AlreadyTakenException, GeneralFailureException, UnauthorizedException {
+        UserData newUser = new UserData("Jerry", "12345", "jerry@gmail.com");
+        userService.register(newUser);
+        AuthData badAuth = new AuthData("badToken","Jerry");
+        assertThrows(UnauthorizedException.class,()->userService.logout(badAuth.authToken()));
+
 
     }
 
