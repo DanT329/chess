@@ -1,7 +1,6 @@
 package service;
 
 import model.UserData;
-import model.AuthData;
 import model.GameData;
 import dataaccess.Memory.DataAccessMemoryUser;
 import dataaccess.Memory.DataAccessMemoryAuth;
@@ -23,19 +22,15 @@ public class AppServiceTest {
 
     @Test
     public void testResetApp() throws DataAccessException {
-        // Add some data to ensure clear works
         DataAccessMemoryUser.getInstance().createUser(new UserData("testUser", "password", "user@gmail.com"));
         DataAccessMemoryAuth.getInstance().createAuth(new UserData("testUser", "password", "user@gmail.com"));
         DataAccessMemoryGame.getInstance().addGame(new GameData(0,null,null,"MyGame",null));
 
-        // Verify that data is not empty before reset
         assertFalse(DataAccessMemoryUser.getInstance().isEmpty());
         assertFalse(DataAccessMemoryAuth.getInstance().isEmpty());
         assertFalse(DataAccessMemoryGame.getInstance().isEmpty());
 
-
         appService.resetApp();
-
 
         assertTrue(DataAccessMemoryUser.getInstance().isEmpty());
         assertTrue(DataAccessMemoryAuth.getInstance().isEmpty());

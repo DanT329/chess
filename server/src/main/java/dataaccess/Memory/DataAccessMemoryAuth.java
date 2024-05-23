@@ -51,7 +51,7 @@ public class DataAccessMemoryAuth implements DataAccessAuth {
         authList.remove(auth);
     }
 
-    // Package-private method for testing
+    // method for testing only
     public boolean isEmpty() {
         return authList.isEmpty();
     }

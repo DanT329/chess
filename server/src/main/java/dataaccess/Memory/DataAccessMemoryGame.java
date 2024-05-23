@@ -87,7 +87,7 @@ public class DataAccessMemoryGame implements DataAccessGame {
         }
         throw new DataAccessException("Game not found");
     }
-    // Package-private method for testing
+    // method for testing only
     public boolean isEmpty() {
         return gameList.isEmpty();
     }
