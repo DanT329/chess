@@ -4,11 +4,20 @@ import model.UserData;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DataAccessMySQLUser implements DataAccessUser {
 
     @Override
     public void clear(){
+        String query = "DELETE FROM users";
+        try(Connection connection = DatabaseManager.getConnection()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+                preparedStatement.executeUpdate();
+            }
+        }catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -29,9 +38,8 @@ public class DataAccessMySQLUser implements DataAccessUser {
                     return null;
                 }
             }
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
+        }catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -44,4 +52,21 @@ public class DataAccessMySQLUser implements DataAccessUser {
         return user;
     }
 
+    //FOR TESTING ONLY
+    public boolean isTableEmpty() {
+        String query = "SELECT COUNT(*) AS total FROM users";
+        try(Connection connection = DatabaseManager.getConnection()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+                try(ResultSet resultSet = preparedStatement.executeQuery()){
+                    if(resultSet.next()){
+                        int count = resultSet.getInt("total");
+                        return count == 0;
+                    }
+                }
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
