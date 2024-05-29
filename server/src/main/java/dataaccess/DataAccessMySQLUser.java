@@ -1,5 +1,6 @@
 package dataaccess;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,11 +49,12 @@ public class DataAccessMySQLUser implements DataAccessUser {
         if(getUser(user) != null){
             throw new DataAccessException("User already exists");
         }
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
         String query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try(Connection connection = DatabaseManager.getConnection()){
             try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
                 preparedStatement.setString(1,user.username());
-                preparedStatement.setString(2,user.password());
+                preparedStatement.setString(2,hashedPassword);
                 preparedStatement.setString(3,user.email());
                 preparedStatement.executeUpdate();
             }
@@ -63,7 +65,26 @@ public class DataAccessMySQLUser implements DataAccessUser {
 
     @Override
     public UserData verifyUser(UserData user) {
-        return user;
+        String query = "SELECT * FROM users WHERE username = ?";
+        try (Connection connection = DatabaseManager.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, user.username());
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        String storedHashedPassword = resultSet.getString("password");
+                        if (BCrypt.checkpw(user.password(), storedHashedPassword)) {
+                            String foundUsername = resultSet.getString("username");
+                            String foundEmail = resultSet.getString("email");
+                            return new UserData(foundUsername, null, foundEmail); // Return user data without the password
+                        }
+                    }
+                    return null; // User not found or password does not match
+                }
+            }
+        } catch (DataAccessException | SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     //FOR TESTING ONLY
