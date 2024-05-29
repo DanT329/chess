@@ -16,6 +16,7 @@ public class DataAccessMySQLAuthTest {
     public void setUp() throws Exception {
         AppService appService = new AppService();
         appService.resetApp();
+
     }
     @Test
     public void createAuthGood() throws SQLException,DataAccessException {
