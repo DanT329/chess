@@ -1,12 +1,10 @@
 package dataaccess;
 
+import dataaccess.mysql.DataAccessMySQLUser;
 import model.UserData;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+
 import java.sql.SQLException;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

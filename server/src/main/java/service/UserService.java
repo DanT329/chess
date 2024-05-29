@@ -1,8 +1,8 @@
 package service;
 
 
-import dataaccess.DataAccessMySQLUser;
-import dataaccess.DataAccessMySQLAuth;
+import dataaccess.mysql.DataAccessMySQLUser;
+import dataaccess.mysql.DataAccessMySQLAuth;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;

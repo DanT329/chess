@@ -1,11 +1,8 @@
 package service;
-import dataaccess.DataAccessMySQLAuth;
-import dataaccess.memory.DataAccessMemoryUser;
-import dataaccess.memory.DataAccessMemoryAuth;
-import dataaccess.memory.DataAccessMemoryGame;
-import dataaccess.DataAccessMySQLGame;
+import dataaccess.mysql.DataAccessMySQLAuth;
+import dataaccess.mysql.DataAccessMySQLGame;
 import dataaccess.DataAccessException;
-import dataaccess.DataAccessMySQLUser;
+import dataaccess.mysql.DataAccessMySQLUser;
 
 
 public class AppService {

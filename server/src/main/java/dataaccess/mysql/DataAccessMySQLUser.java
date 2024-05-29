@@ -1,8 +1,9 @@
-package dataaccess;
+package dataaccess.mysql;
+import dataaccess.DataAccessException;
+import dataaccess.DataAccessUser;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

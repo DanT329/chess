@@ -1,11 +1,14 @@
-package dataaccess;
+package dataaccess.mysql;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import dataaccess.DataAccessException;
+import dataaccess.DataAccessGame;
 import model.GameData;
 import service.exception.AlreadyTakenException;
 
-public class DataAccessMySQLGame implements DataAccessGame{
+public class DataAccessMySQLGame implements DataAccessGame {
     public DataAccessMySQLGame() {
         try{
             configureDatabase();

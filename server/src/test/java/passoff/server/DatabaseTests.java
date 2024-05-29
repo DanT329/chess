@@ -109,7 +109,7 @@ public class DatabaseTests {
     }
 
     private Connection getConnection() throws ReflectiveOperationException {
-        Class<?> clazz = Class.forName("dataaccess.DatabaseManager");
+        Class<?> clazz = Class.forName("dataaccess.mysql.DatabaseManager");
         Method getConnectionMethod = clazz.getDeclaredMethod("getConnection");
         getConnectionMethod.setAccessible(true);
 

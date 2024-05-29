@@ -1,4 +1,4 @@
-package dataaccess;
+package dataaccess.mysql;
 import java.sql.*;
 import java.util.UUID;
 
@@ -7,7 +7,7 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 
-public class DataAccessMySQLAuth implements DataAccessAuth{
+public class DataAccessMySQLAuth implements DataAccessAuth {
     public DataAccessMySQLAuth() {
         try{
             configureDatabase();
