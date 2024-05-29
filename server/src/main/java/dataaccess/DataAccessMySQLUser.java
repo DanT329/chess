@@ -2,6 +2,7 @@ package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,6 +10,13 @@ import java.sql.SQLException;
 
 public class DataAccessMySQLUser implements DataAccessUser {
 
+    public DataAccessMySQLUser(){
+        try{
+            configureDatabase();
+        }catch(DataAccessException e){
+            e.printStackTrace();
+        }
+    }
     @Override
     public void clear(){
         String query = "DELETE FROM users";
@@ -103,5 +111,28 @@ public class DataAccessMySQLUser implements DataAccessUser {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  users (
+              `username` VARCHAR(50) NOT NULL,
+              `password` VARCHAR(256) NOT NULL,
+              `email` VARCHAR(256) NOT NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+           throw new DataAccessException("Can't create data....sorry");
+        }
     }
 }

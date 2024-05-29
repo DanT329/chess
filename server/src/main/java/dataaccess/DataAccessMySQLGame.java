@@ -12,7 +12,13 @@ import model.GameData;
 import service.exception.AlreadyTakenException;
 
 public class DataAccessMySQLGame implements DataAccessGame{
-
+    public DataAccessMySQLGame() {
+        try{
+            configureDatabase();
+        }catch(DataAccessException e){
+            e.printStackTrace();
+        }
+    }
     public void clear(){
         String query = "DELETE FROM games";
         try(Connection connection = DatabaseManager.getConnection()){
@@ -113,6 +119,31 @@ public class DataAccessMySQLGame implements DataAccessGame{
             }
         }catch(SQLException e){
             throw new DataAccessException("Data Access Error");
+        }
+    }
+
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  games (
+              `gameID` INT AUTO_INCREMENT PRIMARY KEY,
+              `whiteUsername` VARCHAR(255),
+              `blackUsername` VARCHAR(255),
+              `gameName` VARCHAR(255),
+              'game' VARCHAR(255)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Can't create data....sorry");
         }
     }
 }

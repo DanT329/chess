@@ -8,7 +8,13 @@ import model.AuthData;
 import model.UserData;
 
 public class DataAccessMySQLAuth implements DataAccessAuth{
-
+    public DataAccessMySQLAuth() {
+        try{
+            configureDatabase();
+        }catch(DataAccessException e){
+            e.printStackTrace();
+        }
+    }
     public void clear() {
         String query = "DELETE FROM auth";
         try(Connection connection = DatabaseManager.getConnection()){
@@ -67,4 +73,25 @@ public class DataAccessMySQLAuth implements DataAccessAuth{
         }
     }
 
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  auth (
+              `username` VARCHAR(255),
+              `authtoken` VARCHAR(255)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Can't create data....sorry");
+        }
+    }
 }
