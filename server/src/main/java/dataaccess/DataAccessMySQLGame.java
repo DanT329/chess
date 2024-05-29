@@ -2,12 +2,6 @@ package dataaccess;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.UUID;
-
-import dataaccess.DataAccessAuth;
-import dataaccess.DataAccessException;
-import model.AuthData;
-import model.UserData;
 import model.GameData;
 import service.exception.AlreadyTakenException;
 
@@ -129,7 +123,7 @@ public class DataAccessMySQLGame implements DataAccessGame{
               `whiteUsername` VARCHAR(255),
               `blackUsername` VARCHAR(255),
               `gameName` VARCHAR(255),
-              'game' VARCHAR(255)
+              `game` VARCHAR(255)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

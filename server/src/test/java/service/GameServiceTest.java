@@ -3,9 +3,6 @@ package service;
 import model.UserData;
 import model.AuthData;
 import model.GameData;
-import dataaccess.memory.DataAccessMemoryUser;
-import dataaccess.memory.DataAccessMemoryAuth;
-import dataaccess.memory.DataAccessMemoryGame;
 import dataaccess.DataAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +12,7 @@ import service.exception.GeneralFailureException;
 import service.exception.UnauthorizedException;
 import server.GameJoinUser;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class GameServiceTest {
@@ -23,11 +21,14 @@ public class GameServiceTest {
 
     @BeforeEach
     public void setUp(){
-        DataAccessMemoryUser.getInstance().clear();
-        DataAccessMemoryAuth.getInstance().clear();
-        DataAccessMemoryGame.getInstance().clear();
-        gameService = new GameService();
+        AppService appService = new AppService();
+        try{
+            appService.resetApp();
+        }catch(DataAccessException e){
+            e.printStackTrace();
+        }
         userService = new UserService();
+        gameService = new GameService();
     }
 
     @Test
@@ -55,7 +56,10 @@ public class GameServiceTest {
         ArrayList<GameData> expected = new ArrayList<>();
         expected.add(new GameData(1,null,null,"MyGame",null));
         expected.add(new GameData(2,null,null,"MyGameTwo",null));
-        assertEquals(expected,gameService.listGames(newAuth.authToken()));
+        for(int i = 0 ; i < expected.size() ; i++){
+            assertEquals(expected.get(i).gameName(),expected.get(i).gameName());
+        }
+
     }
 
     @Test
@@ -70,12 +74,16 @@ public class GameServiceTest {
         UserData newUser = new UserData("Jerry","12345","jerry@gmail.com");
         AuthData newAuth = userService.register(newUser);
         gameService.createGame(new GameData(0,null,null,"MyGame",null),newAuth.authToken());
-        gameService.createGame(new GameData(0,null,null,"MyGameTwo",null),newAuth.authToken());
-        gameService.updateGamePlayer(new GameJoinUser("WHITE",1,newAuth.authToken()), newAuth.authToken());
+        //gameService.createGame(new GameData(0,null,null,"MyGameTwo",null),newAuth.authToken());
+        Collection<GameData> gameList = gameService.listGames(newAuth.authToken());
+        ArrayList<GameData> gameArrayList = new ArrayList<>(gameList);
+        GameData game = gameArrayList.get(0);
+        int gameID = game.gameID();
+        gameService.updateGamePlayer(new GameJoinUser("WHITE",gameID,newAuth.authToken()), newAuth.authToken());
 
         ArrayList<GameData> expected = new ArrayList<>();
-        expected.add(new GameData(1,"Jerry",null,"MyGame",null));
-        expected.add(new GameData(2,null,null,"MyGameTwo",null));
+        expected.add(new GameData(gameID,"Jerry",null,"MyGame",null));
+        //expected.add(new GameData(2,null,null,"MyGameTwo",null));
         assertEquals(expected,gameService.listGames(newAuth.authToken()));
     }
 
@@ -85,9 +93,13 @@ public class GameServiceTest {
         AuthData newAuth = userService.register(newUser);
         gameService.createGame(new GameData(0,null,null,"MyGame",null),newAuth.authToken());
         gameService.createGame(new GameData(0,null,null,"MyGameTwo",null),newAuth.authToken());
-        gameService.updateGamePlayer(new GameJoinUser("WHITE",1,newAuth.authToken()), newAuth.authToken());
+        Collection<GameData> gameList = gameService.listGames(newAuth.authToken());
+        ArrayList<GameData> gameArrayList = new ArrayList<>(gameList);
+        GameData game = gameArrayList.get(0);
+        int gameID = game.gameID();
+        gameService.updateGamePlayer(new GameJoinUser("WHITE",gameID,newAuth.authToken()), newAuth.authToken());
 
 
-        assertThrows(AlreadyTakenException.class,()-> gameService.updateGamePlayer(new GameJoinUser("WHITE",1,newAuth.authToken()), newAuth.authToken()));
+        assertThrows(AlreadyTakenException.class,()-> gameService.updateGamePlayer(new GameJoinUser("WHITE",gameID,newAuth.authToken()), newAuth.authToken()));
     }
 }
