@@ -1,10 +1,9 @@
 package service;
 
+import dataaccess.DataAccessException;
 import model.UserData;
 import model.AuthData;
-import dataaccess.memory.DataAccessMemoryUser;
 import dataaccess.memory.DataAccessMemoryAuth;
-import dataaccess.memory.DataAccessMemoryGame;
 import service.exception.AlreadyTakenException;
 import service.exception.BadRequestException;
 import service.exception.GeneralFailureException;
@@ -19,9 +18,12 @@ public class UserServiceTest {
 
     @BeforeEach
     public void setUp() {
-        DataAccessMemoryUser.getInstance().clear();
-        DataAccessMemoryAuth.getInstance().clear();
-        DataAccessMemoryGame.getInstance().clear();
+        AppService appService = new AppService();
+        try{
+            appService.resetApp();
+        }catch(DataAccessException e){
+            e.printStackTrace();
+        }
         userService = new UserService();
     }
 
