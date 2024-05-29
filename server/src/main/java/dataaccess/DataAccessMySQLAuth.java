@@ -26,23 +26,33 @@ public class DataAccessMySQLAuth implements DataAccessAuth{
         }
     }
 
-    public AuthData createAuth(UserData user) throws DataAccessException{
-        String query = "INSERT INTO auth (username, authtoken) VALUES (?, ?)";
+    public AuthData createAuth(UserData user) throws DataAccessException {
+        String checkQuery = "SELECT COUNT(*) FROM auth WHERE username = ?";
+        String insertQuery = "INSERT INTO auth (username, authtoken) VALUES (?, ?)";
         String authToken = UUID.randomUUID().toString();
-        try(Connection connection = DatabaseManager.getConnection()){
-            try(PreparedStatement statement = connection.prepareStatement(query)){
-             statement.setString(1,user.username());
-             statement.setString(2,authToken);
-             statement.executeUpdate();
-             return new AuthData(authToken,user.username());
+
+        try (Connection connection = DatabaseManager.getConnection()) {
+            // Check if the username already exists
+            try (PreparedStatement statement = connection.prepareStatement(checkQuery)) {
+                statement.setString(1, user.username());
+                ResultSet rs = statement.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    throw new DataAccessException("User already exists");
+                }
             }
-        } catch(SQLIntegrityConstraintViolationException e){
-            System.err.println("SQL Integrity Constraint Violation Exception: " + e.getMessage());
-            throw new DataAccessException("User already exists");
-        }catch (SQLException e) {
+
+            // If the username doesn't exist, insert the new user
+            try (PreparedStatement statement = connection.prepareStatement(insertQuery)) {
+                statement.setString(1, user.username());
+                statement.setString(2, authToken);
+                statement.executeUpdate();
+                return new AuthData(authToken, user.username());
+            }
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     public AuthData verifyToken(String authToken) throws DataAccessException{
         String query = "SELECT * FROM auth WHERE authtoken= ?";
