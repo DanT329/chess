@@ -62,6 +62,36 @@ public class DataAccessMySQLGame implements DataAccessGame{
             }
         }
     public void updateGame(GameData updatedGameData) throws DataAccessException, AlreadyTakenException {
+        String query = "SELECT * FROM games WHERE gameID = ?";
+        try(Connection connection = DatabaseManager.getConnection()){
+            try(PreparedStatement statement = connection.prepareStatement(query)){
+                statement.setInt(1, updatedGameData.gameID());
+                try(ResultSet resultSet = statement.executeQuery()){
+                    if(resultSet.next()){
+                        String whitePlayer = resultSet.getString("whiteusername");
+                        String blackPlayer = resultSet.getString("blackusername");
+                        if(updatedGameData.blackUsername()!=null && blackPlayer == null){
+                            String blackQuery = "UPDATE games SET blackusername = ? WHERE gameID = ?";
+                            updateColor(blackQuery,connection,updatedGameData.blackUsername(), updatedGameData.gameID());
+                        }else if(updatedGameData.whiteUsername()!=null && whitePlayer == null){
+                            String whiteQuery = "UPDATE games SET whiteusername = ? WHERE gameID = ?";
+                            updateColor(whiteQuery,connection,updatedGameData.whiteUsername(),updatedGameData.gameID());
+                        }else{
+                            throw new AlreadyTakenException("already taken");
+                        }
+                    }
+                }
+            }
+        }catch(SQLException e){
+            throw new DataAccessException("Data Access Error");
+        }
+    }
+    private void updateColor(String query,Connection connection,String username,int gameID) throws SQLException {
+        try(PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setString(1,username);
+            statement.setInt(2,gameID);
+            statement.executeUpdate();
+        }
     }
 
     public Collection<GameData> getAllGames() throws DataAccessException{
@@ -70,7 +100,7 @@ public class DataAccessMySQLGame implements DataAccessGame{
         try(Connection connection = DatabaseManager.getConnection()){
             try(PreparedStatement statement = connection.prepareStatement(query)){
                 try(ResultSet resultSet = statement.executeQuery()){
-                    if(resultSet.next()){
+                    while(resultSet.next()){
                         String gamename = resultSet.getString("gamename");
                         int gameID = resultSet.getInt("gameID");
                         String whitePlayer = resultSet.getString("whiteusername");
