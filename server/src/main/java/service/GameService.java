@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import dataaccess.memory.DataAccessMemoryAuth;
 import dataaccess.memory.DataAccessMemoryGame;
+import dataaccess.DataAccessMySQLGame;
 import model.AuthData;
 import model.GameData;
 import server.GameJoinUser;
@@ -15,8 +16,9 @@ import java.util.Collection;
 
 public class GameService {
     //private final DataAccessMemoryAuth dataAccessAuth = DataAccessMemoryAuth.getInstance();
-    private final DataAccessMemoryGame dataAccessGame = DataAccessMemoryGame.getInstance();
+    //private final DataAccessMemoryGame dataAccessGame = DataAccessMemoryGame.getInstance();
     private final DataAccessMySQLAuth dataAccessAuth = new DataAccessMySQLAuth();
+    private final DataAccessMySQLGame dataAccessGame = new DataAccessMySQLGame();
     public GameData createGame(GameData game, String authToken) throws BadRequestException, GeneralFailureException, UnauthorizedException {
         if(game.gameName() == null || game.gameName().isEmpty()){
             throw new BadRequestException("bad request");
