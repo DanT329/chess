@@ -146,6 +146,24 @@ public class DataAccessMySQLGame implements DataAccessGame{
             throw new DataAccessException("Can't create data....sorry");
         }
     }
+
+    //FOR TESTING ONLY
+    public static boolean isTableEmpty() {
+        String query = "SELECT COUNT(*) AS total FROM games";
+        try(Connection connection = DatabaseManager.getConnection()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+                try(ResultSet resultSet = preparedStatement.executeQuery()){
+                    if(resultSet.next()){
+                        int count = resultSet.getInt("total");
+                        return count == 0;
+                    }
+                }
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
 
 

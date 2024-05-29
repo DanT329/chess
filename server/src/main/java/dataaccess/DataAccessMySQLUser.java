@@ -96,7 +96,7 @@ public class DataAccessMySQLUser implements DataAccessUser {
     }
 
     //FOR TESTING ONLY
-    public boolean isTableEmpty() {
+    public static boolean isTableEmpty() {
         String query = "SELECT COUNT(*) AS total FROM users";
         try(Connection connection = DatabaseManager.getConnection()){
             try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
