@@ -52,4 +52,15 @@ public class DataAccessMySQLAuth implements DataAccessAuth{
         }
     }
 
+    public void deleteAuth(AuthData auth) throws DataAccessException, SQLException{
+        String query = "DELETE FROM auth WHERE authtoken= ? AND username= ?";
+        try(Connection connection = DatabaseManager.getConnection()){
+            try(PreparedStatement statement = connection.prepareStatement(query)){
+                statement.setString(2,auth.authToken());
+                statement.setString(1,auth.username());
+                statement.executeUpdate();
+            }
+        }
+    }
+
 }
