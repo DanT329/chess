@@ -56,11 +56,11 @@ public class DataAccessMySQLGame implements DataAccessGame{
                 statement.setString(1, game.gameName());
                 statement.executeUpdate();
                 return getGame(game);
-                }
-            } catch (SQLException ex) {
-            throw new DataAccessException("Data Access Error");
             }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Data Access Error");
         }
+    }
     public void updateGame(GameData updatedGameData) throws DataAccessException, AlreadyTakenException {
         String query = "SELECT * FROM games WHERE gameID = ?";
         try(Connection connection = DatabaseManager.getConnection()){
