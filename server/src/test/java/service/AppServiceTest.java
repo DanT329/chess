@@ -1,10 +1,5 @@
 package service;
 
-import model.UserData;
-import model.GameData;
-import dataaccess.memory.DataAccessMemoryUser;
-import dataaccess.memory.DataAccessMemoryAuth;
-import dataaccess.memory.DataAccessMemoryGame;
 import dataaccess.DataAccessMySQLUser;
 import dataaccess.DataAccessMySQLAuth;
 import dataaccess.DataAccessMySQLGame;
