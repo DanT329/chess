@@ -33,27 +33,23 @@ public class DataAccessMySQLUserTest {
 
     }
 
+
     @Test
-    public void createUserAlreadyExists() throws SQLException,DataAccessException {
+    public void verifyUserValidCredentials() throws DataAccessException {
         DataAccessMySQLUser dataAccess = new DataAccessMySQLUser();
-        UserData user = new UserData("example_user", "password123", "example@example.com");
-
-        // First call to createUser should succeed
+        UserData user = new UserData("existing_user", "password123", "existing@example.com");
         dataAccess.createUser(user);
-
-        // Second call to createUser should throw DataAccessException
-        assertThrows(DataAccessException.class, () -> {
-            dataAccess.createUser(user);
-        });
+        UserData verifiedUser = dataAccess.verifyUser(user);
+        assertEquals(user.username(), verifiedUser.username(), "User should be verified successfully");
     }
 
+    // Negative test for verifyUser
     @Test
-    public void verifyUserGood() throws SQLException {
+    public void verifyUserInvalidCredentials() throws DataAccessException {
         DataAccessMySQLUser dataAccess = new DataAccessMySQLUser();
-        UserData user = new UserData("example_user2","password123","example@example.com");
-        try{dataAccess.createUser(user);}catch(DataAccessException e){}
-        UserData actualUser = dataAccess.verifyUser(user);
-        assertEquals(actualUser.username(),user.username());
+        UserData user = new UserData("existing_user", "invalid_password", "existing@example.com");
+        UserData verifiedUser = dataAccess.verifyUser(user);
+        assertNull(verifiedUser, "User should not be verified with invalid credentials");
     }
     @Test
     public void clearUserGood() throws SQLException {

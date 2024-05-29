@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.memory.DataAccessMemoryUser;
+import dataaccess.DataAccessMySQLUser;
 import dataaccess.memory.DataAccessMemoryAuth;
 import dataaccess.DataAccessException;
 import model.AuthData;
@@ -11,7 +12,8 @@ import service.exception.GeneralFailureException;
 import service.exception.UnauthorizedException;
 
 public class UserService {
-    private final DataAccessMemoryUser dataAccessUser = DataAccessMemoryUser.getInstance();
+    //private final DataAccessMemoryUser dataAccessUser = DataAccessMemoryUser.getInstance();
+    DataAccessMySQLUser dataAccessUser = new DataAccessMySQLUser();
     private final DataAccessMemoryAuth dataAccessAuth = DataAccessMemoryAuth.getInstance();
 
     public AuthData register(UserData user) throws BadRequestException, AlreadyTakenException, GeneralFailureException {
