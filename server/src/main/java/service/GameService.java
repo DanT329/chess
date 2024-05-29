@@ -14,9 +14,9 @@ import service.exception.UnauthorizedException;
 import java.util.Collection;
 
 public class GameService {
-    private final DataAccessMemoryAuth dataAccessAuth = DataAccessMemoryAuth.getInstance();
+    //private final DataAccessMemoryAuth dataAccessAuth = DataAccessMemoryAuth.getInstance();
     private final DataAccessMemoryGame dataAccessGame = DataAccessMemoryGame.getInstance();
-
+    private final DataAccessMySQLAuth dataAccessAuth = new DataAccessMySQLAuth();
     public GameData createGame(GameData game, String authToken) throws BadRequestException, GeneralFailureException, UnauthorizedException {
         if(game.gameName() == null || game.gameName().isEmpty()){
             throw new BadRequestException("bad request");

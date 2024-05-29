@@ -31,13 +31,14 @@ public class DataAccessMySQLAuth implements DataAccessAuth{
              return new AuthData(authToken,user.username());
             }
         } catch(SQLIntegrityConstraintViolationException e){
+            System.err.println("SQL Integrity Constraint Violation Exception: " + e.getMessage());
             throw new DataAccessException("User already exists");
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public AuthData verifyToken(String authToken) throws DataAccessException, SQLException {
+    public AuthData verifyToken(String authToken) throws DataAccessException{
         String query = "SELECT * FROM auth WHERE authtoken= ?";
         try(Connection connection = DatabaseManager.getConnection()){
             try(PreparedStatement statement = connection.prepareStatement(query)){
@@ -49,17 +50,20 @@ public class DataAccessMySQLAuth implements DataAccessAuth{
                     return null;
                 }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void deleteAuth(AuthData auth) throws DataAccessException, SQLException{
-        String query = "DELETE FROM auth WHERE authtoken= ? AND username= ?";
+    public void deleteAuth(AuthData auth) throws DataAccessException{
+        String query = "DELETE FROM auth WHERE authtoken= ?";
         try(Connection connection = DatabaseManager.getConnection()){
             try(PreparedStatement statement = connection.prepareStatement(query)){
-                statement.setString(2,auth.authToken());
-                statement.setString(1,auth.username());
+                statement.setString(1,auth.authToken());
                 statement.executeUpdate();
             }
+        }catch(SQLException e){
+            throw new RuntimeException(e);
         }
     }
 

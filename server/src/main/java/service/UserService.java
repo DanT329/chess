@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.memory.DataAccessMemoryUser;
 import dataaccess.DataAccessMySQLUser;
+import dataaccess.DataAccessMySQLAuth;
 import dataaccess.memory.DataAccessMemoryAuth;
 import dataaccess.DataAccessException;
 import model.AuthData;
@@ -13,9 +14,9 @@ import service.exception.UnauthorizedException;
 
 public class UserService {
     //private final DataAccessMemoryUser dataAccessUser = DataAccessMemoryUser.getInstance();
+    //private final DataAccessMemoryAuth dataAccessAuth = DataAccessMemoryAuth.getInstance();
+    DataAccessMySQLAuth dataAccessAuth = new DataAccessMySQLAuth();
     DataAccessMySQLUser dataAccessUser = new DataAccessMySQLUser();
-    private final DataAccessMemoryAuth dataAccessAuth = DataAccessMemoryAuth.getInstance();
-
     public AuthData register(UserData user) throws BadRequestException, AlreadyTakenException, GeneralFailureException {
         // Check for missing username, password, or email
         if (user.username() == null || user.password() == null || user.email() == null) {
