@@ -23,11 +23,24 @@ public class DataAccessMySQLUserTest {
     }
 
     @Test
+    public void createUserGood() throws SQLException {
+        DataAccessMySQLUser dataAccess = new DataAccessMySQLUser();
+        UserData user = new UserData("example_user","password123","example@example.com");
+        try{
+            dataAccess.createUser(user);
+        }catch(DataAccessException e){
+            System.out.println(e);
+        }
+
+    }
+    @Test
     public void clearUserGood() throws SQLException {
         DataAccessMySQLUser dataAccess = new DataAccessMySQLUser();
         dataAccess.clear();
         assertTrue(dataAccess.isTableEmpty(), "Table should be empty after clear");
     }
+
+
 
 
 

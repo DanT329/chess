@@ -44,7 +44,21 @@ public class DataAccessMySQLUser implements DataAccessUser {
     }
 
     @Override
-    public void createUser(UserData user) {
+    public void createUser(UserData user) throws DataAccessException {
+        if(getUser(user) != null){
+            throw new DataAccessException("User already exists");
+        }
+        String query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        try(Connection connection = DatabaseManager.getConnection()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
+                preparedStatement.setString(1,user.username());
+                preparedStatement.setString(2,user.password());
+                preparedStatement.setString(3,user.email());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
