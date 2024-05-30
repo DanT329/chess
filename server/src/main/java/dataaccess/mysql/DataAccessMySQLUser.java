@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static dataaccess.mysql.DatabaseManager.setUpDatabase;
+
 public class DataAccessMySQLUser implements DataAccessUser {
 
     public DataAccessMySQLUser(){
@@ -125,15 +127,6 @@ public class DataAccessMySQLUser implements DataAccessUser {
     };
 
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("Can't create data....sorry");
-        }
+        setUpDatabase(createStatements);
     }
 }
