@@ -3,6 +3,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import chess.ChessGame;
+import chess.ChessGameDeserializer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import dataaccess.DataAccessGame;
 import model.GameData;
@@ -39,7 +43,14 @@ public class DataAccessMySQLGame implements DataAccessGame {
                         String whitePlayer = resultSet.getString("whiteusername");
                         String blackPlayer = resultSet.getString("blackusername");
                         String gameInstance = resultSet.getString("game");
-                        return new GameData(gameID,whitePlayer,blackPlayer,gamename,null);
+                        ChessGame gameInfo = null;
+                        if(gameInstance != null){
+                            Gson gson = new GsonBuilder()
+                                    .registerTypeAdapter(ChessGame.class, new ChessGameDeserializer())
+                                    .create();
+                            gameInfo = gson.fromJson(gameInstance, ChessGame.class);
+                        }
+                        return new GameData(gameID,whitePlayer,blackPlayer,gamename,gameInfo);
                     }
                     return null;
                 }
@@ -109,7 +120,15 @@ public class DataAccessMySQLGame implements DataAccessGame {
                         String whitePlayer = resultSet.getString("whiteusername");
                         String blackPlayer = resultSet.getString("blackusername");
                         String gameInstance = resultSet.getString("game");
-                        gameList.add(new GameData(gameID,whitePlayer,blackPlayer,gamename,null));
+                        ChessGame gameInfo = null;
+                        if(gameInstance != null){
+                            Gson gson = new GsonBuilder()
+                                    .registerTypeAdapter(ChessGame.class, new ChessGameDeserializer())
+                                    .create();
+                            gameInfo = gson.fromJson(gameInstance, ChessGame.class);
+                        }
+
+                        gameList.add(new GameData(gameID,whitePlayer,blackPlayer,gamename,gameInfo));
                     }
                     return gameList;
                 }
