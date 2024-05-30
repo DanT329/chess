@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import chess.ChessGame;
+import chess.ChessGameDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
