@@ -10,7 +10,8 @@ import com.google.gson.GsonBuilder;
 import model.GameData;
 import service.exception.AlreadyTakenException;
 
-import static dataaccess.DataAccessMySQLAuth.getAllData;
+import static dataaccess.DatabaseManager.getAllData;
+import static dataaccess.DatabaseManager.getAllData;
 import static dataaccess.DatabaseManager.setUpDatabase;
 
 public class DataAccessMySQLGame implements DataAccessGame {

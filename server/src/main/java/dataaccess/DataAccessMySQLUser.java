@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static dataaccess.DataAccessMySQLAuth.getAllData;
+import static dataaccess.DatabaseManager.getAllData;
 import static dataaccess.DatabaseManager.setUpDatabase;
 
 public class DataAccessMySQLUser implements DataAccessUser {

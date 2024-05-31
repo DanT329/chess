@@ -5,6 +5,7 @@ import java.util.UUID;
 import model.AuthData;
 import model.UserData;
 
+import static dataaccess.DatabaseManager.getAllData;
 import static dataaccess.DatabaseManager.setUpDatabase;
 
 public class DataAccessMySQLAuth implements DataAccessAuth {
@@ -94,19 +95,5 @@ public class DataAccessMySQLAuth implements DataAccessAuth {
         return getAllData(query);
     }
 
-    static boolean getAllData(String query) {
-        try(Connection connection = DatabaseManager.getConnection()){
-            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
-                try(ResultSet resultSet = preparedStatement.executeQuery()){
-                    if(resultSet.next()){
-                        int count = resultSet.getInt("total");
-                        return count == 0;
-                    }
-                }
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
+
 }
