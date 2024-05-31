@@ -1,8 +1,8 @@
 package service;
 
-import dataaccess.mysql.DataAccessMySQLUser;
-import dataaccess.mysql.DataAccessMySQLAuth;
-import dataaccess.mysql.DataAccessMySQLGame;
+import dataaccess.DataAccessMySQLUser;
+import dataaccess.DataAccessMySQLAuth;
+import dataaccess.DataAccessMySQLGame;
 import dataaccess.DataAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

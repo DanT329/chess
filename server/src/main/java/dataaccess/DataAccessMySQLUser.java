@@ -1,6 +1,4 @@
-package dataaccess.mysql;
-import dataaccess.DataAccessException;
-import dataaccess.DataAccessUser;
+package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -9,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static dataaccess.mysql.DatabaseManager.setUpDatabase;
+import static dataaccess.DatabaseManager.setUpDatabase;
 
 public class DataAccessMySQLUser implements DataAccessUser {
 

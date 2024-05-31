@@ -1,6 +1,5 @@
 package dataaccess;
 
-import dataaccess.mysql.DataAccessMySQLGame;
 import model.GameData;
 
 import java.sql.SQLException;

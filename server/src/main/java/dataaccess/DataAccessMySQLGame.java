@@ -1,4 +1,4 @@
-package dataaccess.mysql;
+package dataaccess;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,12 +7,10 @@ import chess.ChessGame;
 import chess.ChessGameDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dataaccess.DataAccessException;
-import dataaccess.DataAccessGame;
 import model.GameData;
 import service.exception.AlreadyTakenException;
 
-import static dataaccess.mysql.DatabaseManager.setUpDatabase;
+import static dataaccess.DatabaseManager.setUpDatabase;
 
 public class DataAccessMySQLGame implements DataAccessGame {
     public DataAccessMySQLGame() {

@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.mysql.DataAccessMySQLAuth;
-import dataaccess.mysql.DataAccessMySQLGame;
+import dataaccess.DataAccessMySQLAuth;
+import dataaccess.DataAccessMySQLGame;
 import model.AuthData;
 import model.GameData;
 import server.GameJoinUser;

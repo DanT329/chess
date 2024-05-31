@@ -1,6 +1,5 @@
 package dataaccess;
 
-import dataaccess.mysql.DataAccessMySQLUser;
 import model.UserData;
 
 import java.sql.SQLException;
