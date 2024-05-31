@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import model.GameData;
 import service.exception.AlreadyTakenException;
 
+import static dataaccess.DataAccessMySQLAuth.getAllData;
 import static dataaccess.DatabaseManager.setUpDatabase;
 
 public class DataAccessMySQLGame implements DataAccessGame {
@@ -157,19 +158,7 @@ public class DataAccessMySQLGame implements DataAccessGame {
     //FOR TESTING ONLY
     public static boolean isTableEmpty() {
         String query = "SELECT COUNT(*) AS total FROM games";
-        try(Connection connection = DatabaseManager.getConnection()){
-            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
-                try(ResultSet resultSet = preparedStatement.executeQuery()){
-                    if(resultSet.next()){
-                        int count = resultSet.getInt("total");
-                        return count == 0;
-                    }
-                }
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        return false;
+        return getAllData(query);
     }
 }
 

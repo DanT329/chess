@@ -6,9 +6,7 @@ import dataaccess.DataAccessMySQLUser;
 
 
 public class AppService {
-    //private final DataAccessMemoryUser dataAccessUser = DataAccessMemoryUser.getInstance();
-    //private final DataAccessMemoryAuth dataAccessAuth = DataAccessMemoryAuth.getInstance();
-    //private final DataAccessMemoryGame dataAccessGame = DataAccessMemoryGame.getInstance();
+
     private final DataAccessMySQLUser dataAccessUser = new DataAccessMySQLUser();
     private final DataAccessMySQLAuth dataAccessAuth = new DataAccessMySQLAuth();
     private final DataAccessMySQLGame dataAccessGame = new DataAccessMySQLGame();

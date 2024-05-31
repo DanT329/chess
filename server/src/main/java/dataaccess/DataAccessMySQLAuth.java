@@ -91,6 +91,10 @@ public class DataAccessMySQLAuth implements DataAccessAuth {
     //FOR TESTING ONLY
     public static boolean isTableEmpty() {
         String query = "SELECT COUNT(*) AS total FROM auth";
+        return getAllData(query);
+    }
+
+    static boolean getAllData(String query) {
         try(Connection connection = DatabaseManager.getConnection()){
             try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
                 try(ResultSet resultSet = preparedStatement.executeQuery()){

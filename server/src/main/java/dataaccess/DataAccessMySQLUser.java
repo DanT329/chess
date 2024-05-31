@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static dataaccess.DataAccessMySQLAuth.getAllData;
 import static dataaccess.DatabaseManager.setUpDatabase;
 
 public class DataAccessMySQLUser implements DataAccessUser {
@@ -99,19 +100,7 @@ public class DataAccessMySQLUser implements DataAccessUser {
     //FOR TESTING ONLY
     public static boolean isTableEmpty() {
         String query = "SELECT COUNT(*) AS total FROM users";
-        try(Connection connection = DatabaseManager.getConnection()){
-            try(PreparedStatement preparedStatement = connection.prepareStatement(query)){
-                try(ResultSet resultSet = preparedStatement.executeQuery()){
-                    if(resultSet.next()){
-                        int count = resultSet.getInt("total");
-                        return count == 0;
-                    }
-                }
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        return false;
+        return getAllData(query);
     }
 
     private final String[] createStatements = {
