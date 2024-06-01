@@ -2,6 +2,7 @@ package client;
 
 import dataaccess.DataAccessException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import client.ServerFacade;
 import service.AppService;
 import dataaccess.DataAccessMySQLAuth;
+import dataaccess.DataAccessMySQLGame;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -72,7 +74,7 @@ public class ServerFacadeTests {
         AuthData auth = facade.register(new UserData("example_user","example_password","example_email"));
         facade.logout(auth);
         DataAccessMySQLAuth dba = new DataAccessMySQLAuth();
-        Assertions.assertTrue(dba.isTableEmpty());
+        Assertions.assertTrue(DataAccessMySQLAuth.isTableEmpty());
     }
 
     @Test
@@ -80,6 +82,21 @@ public class ServerFacadeTests {
         facade.register(new UserData("example_user","example_password","example_email"));
         AuthData auth = new AuthData("BadToken","example_user");
         Assertions.assertThrows(IOException.class,()->facade.logout(auth));
+    }
+
+    @Test
+    public void createGameGood() throws IOException, URISyntaxException {
+        AuthData auth = facade.register(new UserData("example_user","example_password","example_email"));
+        GameData game = new GameData(0,null,null,"My_game",null);
+        game = facade.createGame(auth,game);
+        Assertions.assertNotNull(game);
+        Assertions.assertFalse(DataAccessMySQLGame.isTableEmpty());
+    }
+    @Test
+    public void createGameBadAuth() throws IOException, URISyntaxException {
+        facade.register(new UserData("example_user","example_password","example_email"));
+        GameData game = new GameData(0,null,null,"My_game",null);
+        Assertions.assertThrows(IOException.class,()->facade.createGame(new AuthData("BadToken",null),game));
     }
 
 }

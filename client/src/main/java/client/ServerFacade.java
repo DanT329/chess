@@ -43,6 +43,29 @@ public class ServerFacade {
         }
     }
 
+    public GameData createGame(AuthData auth, GameData game) throws IOException, URISyntaxException {
+        String endpoint = "game";
+        URI uri = new URI(String.format("http://%s:%d/%s", host, port,endpoint));
+        HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json; utf-8");
+        connection.setRequestProperty("Authorization", auth.authToken());
+        connection.setDoOutput(true);
+        try (var outputStream = connection.getOutputStream()) {
+            var jsonBody = new Gson().toJson(game);
+            outputStream.write(jsonBody.getBytes());
+        }
+        int responseCode = connection.getResponseCode();
+        if(responseCode == HttpURLConnection.HTTP_OK) {
+            try (InputStream respBody = connection.getInputStream()) {
+                InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+                return new Gson().fromJson(inputStreamReader, GameData.class);
+            }
+        }else{
+            throw handleError(connection);
+        }
+    }
+
     private AuthData getAuthData(UserData user, String endpoint) throws IOException, URISyntaxException {
         URI uri = new URI(String.format("http://%s:%d/%s", host, port,endpoint));
         HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
