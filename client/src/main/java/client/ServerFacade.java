@@ -1,5 +1,6 @@
 package client;
 import com.google.gson.Gson;
+import model.GameWrapper;
 import model.UserData;
 import model.AuthData;
 import model.GameData;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.sql.Connection;
+import java.util.Collection;
 
 public class ServerFacade {
     private final int port;
@@ -60,6 +62,23 @@ public class ServerFacade {
             try (InputStream respBody = connection.getInputStream()) {
                 InputStreamReader inputStreamReader = new InputStreamReader(respBody);
                 return new Gson().fromJson(inputStreamReader, GameData.class);
+            }
+        }else{
+            throw handleError(connection);
+        }
+    }
+
+    GameWrapper listGames(AuthData auth) throws IOException, URISyntaxException {
+        String endpoint = "game";
+        URI uri = new URI(String.format("http://%s:%d/%s", host, port,endpoint));
+        HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", auth.authToken());
+        int responseCode = connection.getResponseCode();
+        if(responseCode == HttpURLConnection.HTTP_OK) {
+            try (InputStream respBody = connection.getInputStream()) {
+                InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+                return new Gson().fromJson(inputStreamReader, GameWrapper.class);
             }
         }else{
             throw handleError(connection);

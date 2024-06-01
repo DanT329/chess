@@ -3,6 +3,7 @@ package client;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
+import model.GameWrapper;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -97,6 +98,23 @@ public class ServerFacadeTests {
         facade.register(new UserData("example_user","example_password","example_email"));
         GameData game = new GameData(0,null,null,"My_game",null);
         Assertions.assertThrows(IOException.class,()->facade.createGame(new AuthData("BadToken",null),game));
+    }
+
+    @Test
+    public void listGamesGood() throws IOException, URISyntaxException {
+        AuthData auth = facade.register(new UserData("example_user","example_password","example_email"));
+        facade.createGame(auth,new GameData(0,null,null,"My_game",null));
+        facade.createGame(auth,new GameData(0,null,null,"My_game2",null));
+        GameWrapper gameList = facade.listGames(auth);
+        Assertions.assertEquals(gameList.games().size(),2);
+    }
+
+    @Test
+    public void listGamesBadAuth() throws IOException, URISyntaxException {
+        AuthData auth = facade.register(new UserData("example_user","example_password","example_email"));
+        facade.createGame(auth,new GameData(0,null,null,"My_game",null));
+        facade.createGame(auth,new GameData(0,null,null,"My_game2",null));
+        Assertions.assertThrows(IOException.class,()->facade.listGames(new AuthData("BadToken",null)));
     }
 
 }
