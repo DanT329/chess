@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
+import java.sql.Connection;
 
 public class ServerFacade {
     private final int port;
@@ -42,15 +43,18 @@ public class ServerFacade {
                 return new Gson().fromJson(inputStreamReader, AuthData.class);
             }
         }else{
-            try(BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
-                StringBuilder stringBuilder = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line);
-                }
-                throw new IOException(stringBuilder.toString());
-            }
+            throw handleError(connection);
         }
+    }
 
+    private IOException handleError(HttpURLConnection connection) throws IOException {
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            throw new IOException(stringBuilder.toString());
+        }
     }
 }
