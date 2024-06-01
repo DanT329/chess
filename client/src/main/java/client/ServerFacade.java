@@ -31,6 +31,18 @@ public class ServerFacade {
         return getAuthData(user, endpoint);
     }
 
+    public void logout(AuthData auth) throws IOException, URISyntaxException {
+        String endpoint = "session";
+        URI uri = new URI(String.format("http://%s:%d/%s", host, port,endpoint));
+        HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
+        connection.setRequestMethod("DELETE");
+        connection.setRequestProperty("authorization", auth.authToken());
+        int responseCode = connection.getResponseCode();
+        if(responseCode != HttpURLConnection.HTTP_OK) {
+            throw handleError(connection);
+        }
+    }
+
     private AuthData getAuthData(UserData user, String endpoint) throws IOException {
         URL url = new URL(String.format("http://%s:%d/%s", host, port,endpoint));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

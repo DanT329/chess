@@ -8,8 +8,9 @@ import server.Server;
 import org.junit.jupiter.api.Assertions;
 import client.ServerFacade;
 import service.AppService;
-
+import dataaccess.DataAccessMySQLAuth;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 
 public class ServerFacadeTests {
@@ -64,6 +65,21 @@ public class ServerFacadeTests {
         facade.register(new UserData("example_user","example_password","example_email"));
         Assertions.assertThrows(IOException.class,()->facade.login(new UserData("bad_password","example_password","example_email")));
 
+    }
+
+    @Test
+    public void logoutGoodAuth() throws IOException, URISyntaxException {
+        AuthData auth = facade.register(new UserData("example_user","example_password","example_email"));
+        facade.logout(auth);
+        DataAccessMySQLAuth dba = new DataAccessMySQLAuth();
+        Assertions.assertTrue(dba.isTableEmpty());
+    }
+
+    @Test
+    public void logoutBadAuth() throws IOException, URISyntaxException {
+        facade.register(new UserData("example_user","example_password","example_email"));
+        AuthData auth = new AuthData("BadToken","example_user");
+        Assertions.assertThrows(IOException.class,()->facade.logout(auth));
     }
 
 }
