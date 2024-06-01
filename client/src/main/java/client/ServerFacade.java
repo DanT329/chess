@@ -21,11 +21,17 @@ public class ServerFacade {
         this.host = host;
     }
 
-    //Login
-
-    //Register
     public AuthData register(UserData user) throws IOException {
         String endpoint = "user";
+        return getAuthData(user, endpoint);
+    }
+
+    public AuthData login(UserData user) throws IOException {
+        String endpoint = "session";
+        return getAuthData(user, endpoint);
+    }
+
+    private AuthData getAuthData(UserData user, String endpoint) throws IOException {
         URL url = new URL(String.format("http://%s:%d/%s", host, port,endpoint));
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");

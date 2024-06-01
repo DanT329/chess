@@ -52,4 +52,18 @@ public class ServerFacadeTests {
         Assertions.assertThrows(IOException.class,()->facade.register(new UserData("example_user","example_password","example_email")));
     }
 
+    @Test
+    public void loginGoodAuth() throws IOException {
+        facade.register(new UserData("example_user","example_password","example_email"));
+        AuthData auth = facade.login(new UserData("example_user","example_password",null));
+        Assertions.assertEquals(auth.username(),"example_user");
+    }
+
+    @Test
+    public void loginBadPassword() throws IOException {
+        facade.register(new UserData("example_user","example_password","example_email"));
+        Assertions.assertThrows(IOException.class,()->facade.login(new UserData("bad_password","example_password","example_email")));
+
+    }
+
 }
