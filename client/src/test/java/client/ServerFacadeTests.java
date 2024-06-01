@@ -43,25 +43,25 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void registerOK() throws IOException {
+    public void registerOK() throws IOException, URISyntaxException {
         AuthData auth = facade.register(new UserData("example_user","example_password","example_email"));
         Assertions.assertEquals(auth.username(),"example_user");
     }
     @Test
-    public void registerDuplicate() throws IOException {
+    public void registerDuplicate() throws IOException, URISyntaxException {
         facade.register(new UserData("example_user","example_password","example_email"));
         Assertions.assertThrows(IOException.class,()->facade.register(new UserData("example_user","example_password","example_email")));
     }
 
     @Test
-    public void loginGoodAuth() throws IOException {
+    public void loginGoodAuth() throws IOException, URISyntaxException {
         facade.register(new UserData("example_user","example_password","example_email"));
         AuthData auth = facade.login(new UserData("example_user","example_password",null));
         Assertions.assertEquals(auth.username(),"example_user");
     }
 
     @Test
-    public void loginBadPassword() throws IOException {
+    public void loginBadPassword() throws IOException, URISyntaxException {
         facade.register(new UserData("example_user","example_password","example_email"));
         Assertions.assertThrows(IOException.class,()->facade.login(new UserData("bad_password","example_password","example_email")));
 

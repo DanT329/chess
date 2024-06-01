@@ -21,12 +21,12 @@ public class ServerFacade {
         this.host = host;
     }
 
-    public AuthData register(UserData user) throws IOException {
+    public AuthData register(UserData user) throws IOException, URISyntaxException {
         String endpoint = "user";
         return getAuthData(user, endpoint);
     }
 
-    public AuthData login(UserData user) throws IOException {
+    public AuthData login(UserData user) throws IOException, URISyntaxException {
         String endpoint = "session";
         return getAuthData(user, endpoint);
     }
@@ -43,9 +43,9 @@ public class ServerFacade {
         }
     }
 
-    private AuthData getAuthData(UserData user, String endpoint) throws IOException {
-        URL url = new URL(String.format("http://%s:%d/%s", host, port,endpoint));
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    private AuthData getAuthData(UserData user, String endpoint) throws IOException, URISyntaxException {
+        URI uri = new URI(String.format("http://%s:%d/%s", host, port,endpoint));
+        HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json; utf-8");
         connection.setDoOutput(true);
