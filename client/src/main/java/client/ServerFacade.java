@@ -1,22 +1,17 @@
 package client;
 import com.google.gson.Gson;
-import model.GameWrapper;
-import model.UserData;
-import model.AuthData;
-import model.GameData;
+import model.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.sql.Connection;
-import java.util.Collection;
+
 
 public class ServerFacade {
     private final int port;
     private final String host;
-    private Gson gson = new Gson();
 
     public ServerFacade(String host, int port) {
         this.port = port;
@@ -81,6 +76,23 @@ public class ServerFacade {
                 return new Gson().fromJson(inputStreamReader, GameWrapper.class);
             }
         }else{
+            throw handleError(connection);
+        }
+    }
+
+    public void joinGame(GameJoinUser gameInfo) throws IOException, URISyntaxException {
+        String endpoint = "game";
+        URI uri = new URI(String.format("http://%s:%d/%s", host, port,endpoint));
+        HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
+        connection.setRequestMethod("PUT");
+        connection.setRequestProperty("Authorization", gameInfo.authToken());
+        connection.setDoOutput(true);
+        try (var outputStream = connection.getOutputStream()) {
+            var jsonBody = new Gson().toJson(gameInfo);
+            outputStream.write(jsonBody.getBytes());
+        }
+        int responseCode = connection.getResponseCode();
+        if(responseCode != HttpURLConnection.HTTP_OK) {
             throw handleError(connection);
         }
     }

@@ -1,10 +1,7 @@
 package client;
 
 import dataaccess.DataAccessException;
-import model.AuthData;
-import model.GameData;
-import model.GameWrapper;
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.*;
 import server.Server;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +11,7 @@ import dataaccess.DataAccessMySQLAuth;
 import dataaccess.DataAccessMySQLGame;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 
 public class ServerFacadeTests {
@@ -117,4 +115,22 @@ public class ServerFacadeTests {
         Assertions.assertThrows(IOException.class,()->facade.listGames(new AuthData("BadToken",null)));
     }
 
+    @Test
+    public void joinGameGood() throws IOException, URISyntaxException {
+        AuthData auth = facade.register(new UserData("example_user","example_password","example_email"));
+        GameData game = facade.createGame(auth,new GameData(0,null,null,"My_game",null));
+        facade.joinGame(new GameJoinUser("WHITE", game.gameID(), auth.authToken()));
+        GameWrapper gameList = facade.listGames(auth);
+        ArrayList<GameData> gameArrayList = new ArrayList<>(gameList.games());
+        GameData checkGame = gameArrayList.get(0);
+        Assertions.assertEquals(checkGame.whiteUsername(),"example_user");
+    }
+
+    @Test
+    public void joinGameAlreadyTaken() throws IOException, URISyntaxException {
+        AuthData auth = facade.register(new UserData("example_user","example_password","example_email"));
+        GameData game = facade.createGame(auth,new GameData(0,null,null,"My_game",null));
+        facade.joinGame(new GameJoinUser("WHITE", game.gameID(), auth.authToken()));
+        Assertions.assertThrows(IOException.class,()->facade.joinGame(new GameJoinUser("WHITE", game.gameID(), auth.authToken())));
+    }
 }

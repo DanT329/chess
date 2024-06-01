@@ -10,7 +10,7 @@ import service.exception.AlreadyTakenException;
 import service.exception.BadRequestException;
 import service.exception.GeneralFailureException;
 import service.exception.UnauthorizedException;
-import server.GameJoinUser;
+import model.GameJoinUser;
 import java.util.ArrayList;
 import java.util.Collection;
 

@@ -5,7 +5,7 @@ import dataaccess.DataAccessMySQLAuth;
 import dataaccess.DataAccessMySQLGame;
 import model.AuthData;
 import model.GameData;
-import server.GameJoinUser;
+import model.GameJoinUser;
 import service.exception.AlreadyTakenException;
 import service.exception.BadRequestException;
 import service.exception.GeneralFailureException;
