@@ -1,9 +1,10 @@
 package ui;
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import client.ServerFacade;
-import model.AuthData;
-import model.GameData;
-import model.GameWrapper;
-import model.UserData;
+import model.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -98,6 +99,25 @@ public class UserInterfaceConsole {
                 }catch(IOException | URISyntaxException e) {
                     System.out.println("[ERROR >> ]" + e.getMessage());
                 }
+            }else if(input.equals("Play Game") && loggedIn){
+                    System.out.print("Enter a game number >> ");
+                    if (scanner.hasNextInt()) {
+                        int gameNumber = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.print("Enter a color >> ");
+                        String color = scanner.nextLine().toUpperCase();
+                        //System.out.println(" ");
+                        try {
+                            serverFacade.joinGame(new GameJoinUser(color, currentGames.get(gameNumber).gameID(),AUTH_TOKEN));
+                            ChessBoard board = new ChessBoard();
+                            board.resetBoard();
+                            printBoard(board, color.equals("WHITE"));
+                        }catch(IOException | URISyntaxException e) {
+                            System.out.println("[ERROR >> ]" + e.getMessage());
+                        }
+                    } else {
+                        System.out.println("Invalid input. Please enter a valid integer.");
+                    }
             }
         }
     }
@@ -118,4 +138,52 @@ public class UserInterfaceConsole {
                     key, game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName());
         }
     }
+
+    private void printBoard(ChessBoard board, boolean isWhitePerspective) {
+        int startRow = isWhitePerspective ? 8 : 1;
+        int endRow = isWhitePerspective ? 1 : 8;
+        int startCol = isWhitePerspective ? 1 : 8;
+        int endCol = isWhitePerspective ? 8 : 1;
+        int rowIncrement = isWhitePerspective ? -1 : 1;
+        int colIncrement = isWhitePerspective ? 1 : -1;
+
+        for (int row = startRow; isWhitePerspective ? row >= endRow : row <= endRow; row += rowIncrement) {
+            System.out.print(row + " ");
+            for (int col = startCol; isWhitePerspective ? col <= endCol : col >= endCol; col += colIncrement) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+
+                // Alternate colors for board spaces
+                boolean isWhiteSpace = (row + col) % 2 == 0;
+                String bgColor = isWhiteSpace ? EscapeSequences.SET_BG_COLOR_LIGHT_GREY : EscapeSequences.SET_BG_COLOR_DARK_GREY;
+
+                // Piece representation with colors
+                String pieceRepresentation;
+                if (piece != null) {
+                    pieceRepresentation = switch (piece.getPieceType()) {
+                        case KING ->
+                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_KING : EscapeSequences.BLACK_KING;
+                        case QUEEN ->
+                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_QUEEN : EscapeSequences.BLACK_QUEEN;
+                        case BISHOP ->
+                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_BISHOP : EscapeSequences.BLACK_BISHOP;
+                        case KNIGHT ->
+                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_KNIGHT : EscapeSequences.BLACK_KNIGHT;
+                        case ROOK ->
+                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_ROOK : EscapeSequences.BLACK_ROOK;
+                        case PAWN ->
+                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_PAWN : EscapeSequences.BLACK_PAWN;
+                        default -> EscapeSequences.EMPTY;
+                    };
+                } else {
+                    pieceRepresentation = EscapeSequences.EMPTY;
+                }
+
+                System.out.print(bgColor + pieceRepresentation + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR);
+            }
+            System.out.println();
+        }
+        System.out.println("   a   b   c   d   e   f   g   h");
+    }
+
 }
