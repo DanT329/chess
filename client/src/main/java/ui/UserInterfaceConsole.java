@@ -114,6 +114,8 @@ public class UserInterfaceConsole {
                             printBoard(board, color.equals("WHITE"));
                         }catch(IOException | URISyntaxException e) {
                             System.out.println("[ERROR >> ]" + e.getMessage());
+                        }catch(NullPointerException e){
+                            System.out.println("[ERROR >> ] Invalid Game Number");
                         }
                     } else {
                         System.out.println("Invalid input. Please enter a valid integer.");
@@ -183,7 +185,7 @@ public class UserInterfaceConsole {
             }
             System.out.println();
         }
-        System.out.println("   a   b   c   d   e   f   g   h");
+        System.out.println("   A   B   C  D   E   F   G   H");
     }
 
 }
