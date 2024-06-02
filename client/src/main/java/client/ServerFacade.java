@@ -63,7 +63,7 @@ public class ServerFacade {
         }
     }
 
-    GameWrapper listGames(AuthData auth) throws IOException, URISyntaxException {
+    public GameWrapper listGames(AuthData auth) throws IOException, URISyntaxException {
         String endpoint = "game";
         URI uri = new URI(String.format("http://%s:%d/%s", host, port,endpoint));
         HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
