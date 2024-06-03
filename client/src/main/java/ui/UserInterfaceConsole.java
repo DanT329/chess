@@ -15,15 +15,15 @@ import java.util.Scanner;
 public class UserInterfaceConsole {
     ServerFacade serverFacade;
     private boolean loggedIn = false;
-    String auth_token;
-    String user_name;
+    String authToken;
+    String userName;
     HashMap<Integer, GameData> currentGames = new HashMap<>();
 
     public UserInterfaceConsole(ServerFacade serverFacade) {
         this.serverFacade = serverFacade;
     }
     public void run() {
-        System.out.println("Welcome to Chess for CS240!");
+        System.out.println("Welcome to Chess for CS240! Enter the command:Help");
         Scanner scanner = new Scanner(System.in);
         while (true) {
             if(!loggedIn){
@@ -45,8 +45,8 @@ public class UserInterfaceConsole {
                 String email = scanner.nextLine();
                 try{
                     AuthData auth = serverFacade.register(new UserData(username, password,email));
-                    auth_token = auth.authToken();
-                    user_name = auth.username();
+                    authToken = auth.authToken();
+                    userName = auth.username();
                     loggedIn = true;
                 }catch(IOException | URISyntaxException e){
                     System.out.println("[ERROR >> ]" + e.getMessage());
@@ -58,8 +58,8 @@ public class UserInterfaceConsole {
                 String password = scanner.nextLine();
                 try{
                    AuthData auth = serverFacade.login(new UserData(username,password,null));
-                   auth_token = auth.authToken();
-                   user_name = auth.username();
+                   authToken = auth.authToken();
+                   userName = auth.username();
                    loggedIn = true;
                 }catch(IOException | URISyntaxException e){
                     System.out.println("[ERROR >> ]" + e.getMessage());
@@ -74,7 +74,7 @@ public class UserInterfaceConsole {
                 }
             }else if(input.equals("Logout") && loggedIn){
                 try{
-                    serverFacade.logout(new AuthData(auth_token, user_name));
+                    serverFacade.logout(new AuthData(authToken, userName));
                     loggedIn = false;
                 }catch(IOException | URISyntaxException e){
                     System.out.println("[ERROR >> ]" + e.getMessage());
@@ -83,7 +83,7 @@ public class UserInterfaceConsole {
                 try{
                     System.out.print("Enter a game name >> ");
                     String gameName = scanner.nextLine();
-                    serverFacade.createGame(new AuthData(auth_token, user_name),new GameData(0,null,null,gameName,null));
+                    serverFacade.createGame(new AuthData(authToken, userName),new GameData(0,null,null,gameName,null));
                 }catch(IOException | URISyntaxException e) {
                     System.out.println("[ERROR >> ]" + e.getMessage());
                 }
@@ -95,7 +95,7 @@ public class UserInterfaceConsole {
                         System.out.print("Enter a color >> ");
                         String color = scanner.nextLine().toUpperCase();
                         try {
-                            serverFacade.joinGame(new GameJoinUser(color, currentGames.get(gameNumber).gameID(),auth_token));
+                            serverFacade.joinGame(new GameJoinUser(color, currentGames.get(gameNumber).gameID(),authToken));
                             ChessBoard board = new ChessBoard();
                             board.resetBoard();
                             printBoard(board, color.equals("WHITE"));
@@ -119,7 +119,7 @@ public class UserInterfaceConsole {
     }
 
     private void printGames() throws IOException, URISyntaxException {
-        GameWrapper gameList = serverFacade.listGames(new AuthData(auth_token, null));
+        GameWrapper gameList = serverFacade.listGames(new AuthData(authToken, null));
         Integer i = 1;
         currentGames.clear();
         for (GameData game : gameList.games()) {
