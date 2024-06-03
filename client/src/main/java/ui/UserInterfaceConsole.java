@@ -193,7 +193,11 @@ public class UserInterfaceConsole {
         int endCol = isWhitePerspective ? 8 : 1;
         int rowIncrement = isWhitePerspective ? -1 : 1;
         int colIncrement = isWhitePerspective ? 1 : -1;
-        System.out.println("   A\u2003 B   C\u2003 D\u2003 E\u2003 F\u2003 G\u2003 H");
+        if(isWhitePerspective){
+            System.out.println("   A\u2003 B   C\u2003 D\u2003 E\u2003 F\u2003 G\u2003 H");
+        }else{
+            System.out.println("   H\u2003 G   F\u2003 E\u2003 D\u2003 C\u2003 B\u2003 A");
+        }
         for (int row = startRow; isWhitePerspective ? row >= endRow : row <= endRow; row += rowIncrement) {
             System.out.print(row + " ");
             for (int col = startCol; isWhitePerspective ? col <= endCol : col >= endCol; col += colIncrement) {
@@ -210,7 +214,11 @@ public class UserInterfaceConsole {
             }
             System.out.println();
         }
-        System.out.println("   A\u2003 B   C\u2003 D\u2003 E\u2003 F\u2003 G\u2003 H");
+        if(isWhitePerspective){
+            System.out.println("   A\u2003 B   C\u2003 D\u2003 E\u2003 F\u2003 G\u2003 H");
+        }else{
+            System.out.println("   H\u2003 G   F\u2003 E\u2003 D\u2003 C\u2003 B\u2003 A");
+        }
     }
 
     private static String getPieceRepresentation(ChessPiece piece) {
