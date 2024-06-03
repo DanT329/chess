@@ -88,34 +88,7 @@ public class UserInterfaceConsole {
                     System.out.println("[ERROR >> ]" + e.getMessage());
                 }
             }else if(input.equals("Play Game") && loggedIn){
-                System.out.print("Enter a game number >> ");
-                if (scanner.hasNextInt()) {
-                    int gameNumber = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.print("Enter a color >> ");
-                    String color = scanner.nextLine().toUpperCase();
-
-                    try {
-                        if(checkActiveGame(gameNumber, color)) {
-                            // Player is already listed as white or black, do nothing
-                        } else {
-                            try {
-                                serverFacade.joinGame(new GameJoinUser(color, currentGames.get(gameNumber).gameID(), authToken));
-                                ChessBoard board = new ChessBoard();
-                                board.resetBoard();
-                                printBoard(board, color.equals("WHITE"));
-                            } catch(IOException | URISyntaxException e) {
-                                System.out.println("[ERROR >> ] " + e.getMessage());
-                            } catch(NullPointerException e) {
-                                System.out.println("[ERROR >> ] Invalid Game Number");
-                            }
-                        }
-                    } catch(NullPointerException e) {
-                        System.out.println("[ERROR >> ] Invalid Game Number");
-                    }
-                } else {
-                    System.out.println("Invalid input. Please enter a valid integer.");
-                }
+                playGame(scanner);
             }
             else if(input.equals("Observe Game") && loggedIn){
                 observeGame();
@@ -125,6 +98,36 @@ public class UserInterfaceConsole {
         }
     }
 
+    private void playGame(Scanner scanner){
+        System.out.print("Enter a game number >> ");
+        if (scanner.hasNextInt()) {
+            int gameNumber = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Enter a color >> ");
+            String color = scanner.nextLine().toUpperCase();
+
+            try {
+                if(checkActiveGame(gameNumber, color)) {
+                    // Player is already listed as white or black, do nothing
+                } else {
+                    try {
+                        serverFacade.joinGame(new GameJoinUser(color, currentGames.get(gameNumber).gameID(), authToken));
+                        ChessBoard board = new ChessBoard();
+                        board.resetBoard();
+                        printBoard(board, color.equals("WHITE"));
+                    } catch(IOException | URISyntaxException e) {
+                        System.out.println("[ERROR >> ] " + e.getMessage());
+                    } catch(NullPointerException e) {
+                        System.out.println("[ERROR >> ] Invalid Game Number");
+                    }
+                }
+            } catch(NullPointerException e) {
+                System.out.println("[ERROR >> ] Invalid Game Number");
+            }
+        } else {
+            System.out.println("Invalid input. Please enter a valid integer.");
+        }
+    }
     private void observeGame(){
         ChessBoard board = new ChessBoard();
         board.resetBoard();
