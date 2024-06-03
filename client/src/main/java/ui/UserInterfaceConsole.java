@@ -118,16 +118,19 @@ public class UserInterfaceConsole {
                 }
             }
             else if(input.equals("Observe Game") && loggedIn){
-                ChessBoard board = new ChessBoard();
-                board.resetBoard();
-                printBoard(board, true);
-                printBoard(board, false);
+                observeGame();
             }else{
                 System.out.println("Invalid input");
             }
         }
     }
 
+    private void observeGame(){
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        printBoard(board, true);
+        printBoard(board, false);
+    }
     private boolean checkActiveGame(Integer gameNumber, String color) throws NullPointerException {
         if (!currentGames.containsKey(gameNumber)) {
             throw new NullPointerException("Game number does not exist.");
