@@ -15,8 +15,8 @@ import java.util.Scanner;
 public class UserInterfaceConsole {
     ServerFacade serverFacade;
     private boolean loggedIn = false;
-    String AUTH_TOKEN;
-    String USER_NAME;
+    String auth_token;
+    String user_name;
     HashMap<Integer, GameData> currentGames = new HashMap<>();
 
     public UserInterfaceConsole(ServerFacade serverFacade) {
@@ -35,11 +35,7 @@ public class UserInterfaceConsole {
             if(input.equals("Quit") && !loggedIn){
                 System.exit(0);
             }else if(input.equals("Help") && !loggedIn){
-                System.out.println("""
-                        Quite - Exit Application
-                        Login - Login to play games
-                        Register - Register a new account
-                        Help - List commands""");
+                helpLoggedOut();
             }else if(input.equals("Register") && !loggedIn){
                 System.out.println("Enter username >> ");
                 String username = scanner.nextLine();
@@ -49,8 +45,8 @@ public class UserInterfaceConsole {
                 String email = scanner.nextLine();
                 try{
                     AuthData auth = serverFacade.register(new UserData(username, password,email));
-                    AUTH_TOKEN = auth.authToken();
-                    USER_NAME = auth.username();
+                    auth_token = auth.authToken();
+                    user_name = auth.username();
                     loggedIn = true;
                 }catch(IOException | URISyntaxException e){
                     System.out.println("[ERROR >> ]" + e.getMessage());
@@ -62,19 +58,14 @@ public class UserInterfaceConsole {
                 String password = scanner.nextLine();
                 try{
                    AuthData auth = serverFacade.login(new UserData(username,password,null));
-                   AUTH_TOKEN = auth.authToken();
-                   USER_NAME = auth.username();
+                   auth_token = auth.authToken();
+                   user_name = auth.username();
                    loggedIn = true;
                 }catch(IOException | URISyntaxException e){
                     System.out.println("[ERROR >> ]" + e.getMessage());
                 }
             }else if(input.equals("Help") && loggedIn){
-                System.out.println("""
-                        Logout - Logs out user from Application
-                        Create Game - Input name for new game
-                        Play Game - Chose a game and color to join
-                        Observe Game - View a game as an observer
-                        Help - List commands""");
+                helpLoggedIn();
             }else if(input.equals("List Games") && loggedIn){
                 try{
                     printGames();
@@ -83,7 +74,7 @@ public class UserInterfaceConsole {
                 }
             }else if(input.equals("Logout") && loggedIn){
                 try{
-                    serverFacade.logout(new AuthData(AUTH_TOKEN,USER_NAME));
+                    serverFacade.logout(new AuthData(auth_token, user_name));
                     loggedIn = false;
                 }catch(IOException | URISyntaxException e){
                     System.out.println("[ERROR >> ]" + e.getMessage());
@@ -92,7 +83,7 @@ public class UserInterfaceConsole {
                 try{
                     System.out.print("Enter a game name >> ");
                     String gameName = scanner.nextLine();
-                    serverFacade.createGame(new AuthData(AUTH_TOKEN,USER_NAME),new GameData(0,null,null,gameName,null));
+                    serverFacade.createGame(new AuthData(auth_token, user_name),new GameData(0,null,null,gameName,null));
                 }catch(IOException | URISyntaxException e) {
                     System.out.println("[ERROR >> ]" + e.getMessage());
                 }
@@ -103,9 +94,8 @@ public class UserInterfaceConsole {
                         scanner.nextLine();
                         System.out.print("Enter a color >> ");
                         String color = scanner.nextLine().toUpperCase();
-                        //System.out.println(" ");
                         try {
-                            serverFacade.joinGame(new GameJoinUser(color, currentGames.get(gameNumber).gameID(),AUTH_TOKEN));
+                            serverFacade.joinGame(new GameJoinUser(color, currentGames.get(gameNumber).gameID(),auth_token));
                             ChessBoard board = new ChessBoard();
                             board.resetBoard();
                             printBoard(board, color.equals("WHITE"));
@@ -123,13 +113,13 @@ public class UserInterfaceConsole {
                 printBoard(board, true);
                 printBoard(board, false);
             }else{
-                System.out.println("Invalid input.");
+                System.out.println("Invalid input");
             }
         }
     }
 
     private void printGames() throws IOException, URISyntaxException {
-        GameWrapper gameList = serverFacade.listGames(new AuthData(AUTH_TOKEN, null));
+        GameWrapper gameList = serverFacade.listGames(new AuthData(auth_token, null));
         Integer i = 1;
         currentGames.clear();
         for (GameData game : gameList.games()) {
@@ -143,6 +133,24 @@ public class UserInterfaceConsole {
             System.out.printf("Game %d: ID=%s, White Player=%s, Black Player=%s, Name=%s%n",
                     key, game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName());
         }
+    }
+
+    private void helpLoggedIn(){
+        System.out.println("""
+                        Logout - Logs out user from Application
+                        Create Game - Input name for new game
+                        Play Game - Chose a game and color to join
+                        Observe Game - View a game as an observer
+                        List Games - View all active games
+                        Help - List commands""");
+    }
+
+    private void helpLoggedOut(){
+        System.out.println("""
+                        Quite - Exit Application
+                        Login - Login to play games
+                        Register - Register a new account
+                        Help - List commands""");
     }
 
     private void printBoard(ChessBoard board, boolean isWhitePerspective) {
@@ -163,33 +171,37 @@ public class UserInterfaceConsole {
                 boolean isWhiteSpace = (row + col) % 2 == 0;
                 String bgColor = isWhiteSpace ? EscapeSequences.SET_BG_COLOR_LIGHT_GREY : EscapeSequences.SET_BG_COLOR_DARK_GREY;
 
-                // Piece representation with colors
-                String pieceRepresentation;
-                if (piece != null) {
-                    pieceRepresentation = switch (piece.getPieceType()) {
-                        case KING ->
-                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_KING : EscapeSequences.BLACK_KING;
-                        case QUEEN ->
-                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_QUEEN : EscapeSequences.BLACK_QUEEN;
-                        case BISHOP ->
-                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_BISHOP : EscapeSequences.BLACK_BISHOP;
-                        case KNIGHT ->
-                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_KNIGHT : EscapeSequences.BLACK_KNIGHT;
-                        case ROOK ->
-                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_ROOK : EscapeSequences.BLACK_ROOK;
-                        case PAWN ->
-                                piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_PAWN : EscapeSequences.BLACK_PAWN;
-                        default -> EscapeSequences.EMPTY;
-                    };
-                } else {
-                    pieceRepresentation = EscapeSequences.EMPTY;
-                }
+                String pieceRepresentation = getPieceRepresentation(piece);
 
                 System.out.print(bgColor + pieceRepresentation + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR);
             }
             System.out.println();
         }
         System.out.println("   A\u2003 B   C\u2003 D\u2003 E\u2003 F\u2003 G\u2003 H");
+    }
+
+    private static String getPieceRepresentation(ChessPiece piece) {
+        String pieceRepresentation;
+        if (piece != null) {
+            pieceRepresentation = switch (piece.getPieceType()) {
+                case KING ->
+                        piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_KING : EscapeSequences.BLACK_KING;
+                case QUEEN ->
+                        piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_QUEEN : EscapeSequences.BLACK_QUEEN;
+                case BISHOP ->
+                        piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_BISHOP : EscapeSequences.BLACK_BISHOP;
+                case KNIGHT ->
+                        piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_KNIGHT : EscapeSequences.BLACK_KNIGHT;
+                case ROOK ->
+                        piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_ROOK : EscapeSequences.BLACK_ROOK;
+                case PAWN ->
+                        piece.getTeamColor() == ChessGame.TeamColor.WHITE ? EscapeSequences.WHITE_PAWN : EscapeSequences.BLACK_PAWN;
+                default -> EscapeSequences.EMPTY;
+            };
+        } else {
+            pieceRepresentation = EscapeSequences.EMPTY;
+        }
+        return pieceRepresentation;
     }
 
 }
