@@ -22,7 +22,6 @@ public class UserInterfaceConsole {
     public UserInterfaceConsole(ServerFacade serverFacade) {
         this.serverFacade = serverFacade;
     }
-
     public void run() {
         System.out.println("Welcome to Chess for CS240!");
         Scanner scanner = new Scanner(System.in);
@@ -32,11 +31,9 @@ public class UserInterfaceConsole {
             }else{
                 System.out.print("[LOGGED IN] >> ");
             }
-
             String input = scanner.nextLine();
-
             if(input.equals("Quit") && !loggedIn){
-                break;
+                System.exit(0);
             }else if(input.equals("Help") && !loggedIn){
                 System.out.println("""
                         Quite - Exit Application
@@ -120,6 +117,13 @@ public class UserInterfaceConsole {
                     } else {
                         System.out.println("Invalid input. Please enter a valid integer.");
                     }
+            }else if(input.equals("Observe Game") && loggedIn){
+                ChessBoard board = new ChessBoard();
+                board.resetBoard();
+                printBoard(board, true);
+                printBoard(board, false);
+            }else{
+                System.out.println("Invalid input.");
             }
         }
     }
@@ -148,7 +152,7 @@ public class UserInterfaceConsole {
         int endCol = isWhitePerspective ? 8 : 1;
         int rowIncrement = isWhitePerspective ? -1 : 1;
         int colIncrement = isWhitePerspective ? 1 : -1;
-
+        System.out.println("   A\u2003 B   C\u2003 D\u2003 E\u2003 F\u2003 G\u2003 H");
         for (int row = startRow; isWhitePerspective ? row >= endRow : row <= endRow; row += rowIncrement) {
             System.out.print(row + " ");
             for (int col = startCol; isWhitePerspective ? col <= endCol : col >= endCol; col += colIncrement) {
@@ -185,7 +189,7 @@ public class UserInterfaceConsole {
             }
             System.out.println();
         }
-        System.out.println("   A   B   C  D   E   F   G   H");
+        System.out.println("   A\u2003 B   C\u2003 D\u2003 E\u2003 F\u2003 G\u2003 H");
     }
 
 }
