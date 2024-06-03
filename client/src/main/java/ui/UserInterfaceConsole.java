@@ -206,7 +206,7 @@ public class UserInterfaceConsole {
 
                 // Alternate colors for board spaces
                 boolean isWhiteSpace = (row + col) % 2 == 0;
-                String bgColor = isWhiteSpace ? EscapeSequences.SET_BG_COLOR_LIGHT_GREY : EscapeSequences.SET_BG_COLOR_DARK_GREY;
+                String bgColor = isWhiteSpace ? EscapeSequences.SET_BG_COLOR_DARK_GREY:EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
 
                 String pieceRepresentation = getPieceRepresentation(piece);
 
