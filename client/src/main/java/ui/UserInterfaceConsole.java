@@ -5,7 +5,7 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import client.ServerFacade;
 import model.*;
-
+import client.websocket.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -115,6 +115,8 @@ public class UserInterfaceConsole {
                         ChessBoard board = new ChessBoard();
                         board.resetBoard();
                         printBoard(board, color.equals("WHITE"));
+                        UserInterfaceGameplay gamePlay = new UserInterfaceGameplay(authToken,new WebSocketFacade("http://localhost:8080"),currentGames.get(gameNumber).gameID());
+                        gamePlay.run();
                     } catch(IOException | URISyntaxException e) {
                         System.out.println("[ERROR >> ] " + e.getMessage());
                     } catch(NullPointerException e) {
