@@ -22,17 +22,27 @@ public class UserInterfaceGameplay {
     private ChessGame chessGame;
     private ChessBoard chessBoard;
     private final Integer gameID;
-    public UserInterfaceGameplay(String authToken, WebSocketFacade webSocketFacade, Integer gameID) {
+    private final boolean isWhite;
+    public UserInterfaceGameplay(String authToken, WebSocketFacade webSocketFacade, Integer gameID, boolean isWhite) {
         this.authToken = authToken;
         this.webSocketFacade = webSocketFacade;
         this.gameID = gameID;
+        this.isWhite = isWhite;
     }
 
     public void run(){
         System.out.println("Starting Game! Enter the command:Help");
-        //TODO: Add commands and interaction with websocket
-        //Open a socket
-        //Send CONNECT to server
         webSocketFacade.playGame(gameID,authToken);
+        //TODO: Set Start board in database
+        //TODO: Print start board to screen
+        //TODO: Implement make move
+    }
+
+    public void startBoard(){
+
+    }
+
+    public void printBoard(){
+
     }
 }

@@ -115,7 +115,7 @@ public class UserInterfaceConsole {
                         ChessBoard board = new ChessBoard();
                         board.resetBoard();
                         printBoard(board, color.equals("WHITE"));
-                        UserInterfaceGameplay gamePlay = new UserInterfaceGameplay(authToken,new WebSocketFacade("http://localhost:8080"),currentGames.get(gameNumber).gameID());
+                        UserInterfaceGameplay gamePlay = new UserInterfaceGameplay(authToken,new WebSocketFacade("http://localhost:8080"),currentGames.get(gameNumber).gameID(),color.equals("WHITE"));
                         gamePlay.run();
                     } catch(IOException | URISyntaxException e) {
                         System.out.println("[ERROR >> ] " + e.getMessage());
