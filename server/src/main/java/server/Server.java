@@ -6,13 +6,18 @@ import service.*;
 import com.google.gson.JsonObject;
 import spark.*;
 import java.util.Collection;
+import server.websocket.*;
 public class Server {
     private final UserService userService = new UserService();
     private final GameService gameService = new GameService();
     private final AppService appService = new AppService();
+    private final WebSocketHandler webSocketHandler = new WebSocketHandler();
     public int run(int desiredPort) {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", webSocketHandler);
+
         Spark.post("/user", (req, res) -> {
             try {
                 UserData user = new Gson().fromJson(req.body(), UserData.class);
