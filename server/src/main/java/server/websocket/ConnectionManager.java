@@ -1,40 +1,41 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
-import websocket.commands.*;
-import websocket.messages.*;
+import websocket.messages.Notification;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    // Map from gameID to list of connections (participants)
+    private final ConcurrentHashMap<Integer, List<Connection>> gameConnections = new ConcurrentHashMap<>();
 
-    public void add(String visitorName, Session session) {
-        var connection = new Connection(visitorName, session);
-        connections.put(visitorName, connection);
+    public void add(int gameID, String visitorName, Session session) {
+        var connection = new Connection(gameID, visitorName, session);
+        gameConnections.computeIfAbsent(gameID, k -> new CopyOnWriteArrayList<>()).add(connection);
     }
 
-    public void remove(String visitorName) {
-        connections.remove(visitorName);
-    }
-
-    public void broadcast(String excludeVisitorName, Notification notification) throws IOException {
-        var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.visitorName.equals(excludeVisitorName)) {
-                    c.send(notification.toString());
-                }
-            } else {
-                removeList.add(c);
+    public void remove(int gameID, String visitorName) {
+        List<Connection> connections = gameConnections.get(gameID);
+        if (connections != null) {
+            connections.removeIf(connection -> connection.userName.equals(visitorName));
+            if (connections.isEmpty()) {
+                gameConnections.remove(gameID);
             }
         }
+    }
 
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.visitorName);
+    public void broadcast(int gameID, String excludeVisitorName, Notification notification) throws IOException {
+        List<Connection> connections = gameConnections.get(gameID);
+        if (connections != null) {
+            String notificationMessage = notification.toString();
+            for (Connection connection : connections) {
+                if (connection.session.isOpen() && !connection.userName.equals(excludeVisitorName)) {
+                    connection.send(notificationMessage);
+                }
+            }
         }
     }
 }
