@@ -20,5 +20,8 @@ public class UserInterfaceGameplay {
 
     public void run(){
         //TODO: Add commands and interaction with websocket
+        //Open a socket
+        //Send CONNECT to server
+        //Draw gameplay ui
     }
 }
