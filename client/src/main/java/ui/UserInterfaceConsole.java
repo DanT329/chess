@@ -116,7 +116,7 @@ public class UserInterfaceConsole {
                         //board.resetBoard();
                         //printBoard(board, color.equals("WHITE"));
                         UserInterfaceGameplay gamePlay = new UserInterfaceGameplay(authToken,new WebSocketFacade("http://localhost:8080"),currentGames.get(gameNumber).gameID(),color.equals("WHITE"));
-                        gamePlay.run();
+                        gamePlay.run(scanner);
                     } catch(IOException | URISyntaxException e) {
                         System.out.println("[ERROR >> ] " + e.getMessage());
                     } catch(NullPointerException e) {

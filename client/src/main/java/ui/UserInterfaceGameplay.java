@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder;
 
 import client.websocket.WebSocketFacade;
 
+import java.util.Scanner;
+
 public class UserInterfaceGameplay {
 
     private final String authToken;
@@ -23,20 +25,118 @@ public class UserInterfaceGameplay {
         this.webSocketFacade.setOnGameStateChange(this::updateGameState); // Set listener for game state changes
     }
 
-    public void run() {
-        System.out.println("Starting Game! Enter the command: Help");
+    public void run(Scanner scanner) {
+
         webSocketFacade.playGame(gameID, authToken);
-        System.out.println("Game played!");
-        // TODO: Set Start board in database
-        // TODO: Print start board to screen
-        // TODO: Implement make move
+        try {
+            Thread.sleep(1000); // 1000 milliseconds delay
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore the interrupted status
+            System.out.println("The game was interrupted.");
+        }
+        System.out.println("Starting Game! Enter the command: Help");
+        // Main game loop
+        while (true) {
+            System.out.print("[IN GAME] >> ");
+            String input = scanner.nextLine();
+
+            switch (input.toLowerCase()) {
+                case "make move":
+                    makeMove(scanner);
+                    printBoard(chessGame.getBoard(), isWhite);
+                    break;
+                case "quit":
+                    System.out.println("Quitting the game...");
+                    return; // Exit the method, effectively ending the game loop
+                case "help":
+                    printHelp();
+                    break;
+                default:
+                    System.out.println("Unknown command. Type 'Help' for a list of commands.");
+                    break;
+            }
+        }
+    }
+
+    // Method to print help commands
+    private void printHelp() {
+        System.out.println("Available commands:");
+        System.out.println("- Make Move: To make a move in the game.");
+        System.out.println("- Quit: To exit the game.");
+        System.out.println("- Help: To display this help message.");
     }
 
     private void updateGameState(ChessGame newGameState) {
         this.chessGame = newGameState;
         System.out.println("Game state updated!");
         printBoard(chessGame.getBoard(), isWhite);
-        // TODO: Update the UI with the new game state
+    }
+
+    private void makeMove(Scanner scanner) {
+        // Prompt the user for the start and end positions
+        System.out.println("Select start position (e.g., 1A): ");
+        String startPosition = scanner.nextLine();
+        System.out.println("Select end position (e.g., 2A): ");
+        String endPosition = scanner.nextLine();
+
+        // Convert input to a ChessMove
+        ChessMove playerMove = convertMoveInput(startPosition, endPosition, scanner);
+
+        // Attempt to make the move in the chess game
+        try {
+            chessGame.makeMove(playerMove);
+        } catch (InvalidMoveException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private ChessMove convertMoveInput(String start, String end, Scanner scanner) {
+        ChessPiece.PieceType pieceType = null;
+
+        // Extract and convert the row and column from the start position
+        int row = Character.getNumericValue(start.charAt(0));
+        int column = start.charAt(1) - 'A' + 1;
+        ChessPosition startPosition = new ChessPosition(row, column);
+
+        // Extract and convert the row and column from the end position
+        row = Character.getNumericValue(end.charAt(0));
+        column = end.charAt(1) - 'A' + 1;
+        ChessPosition endPosition = new ChessPosition(row, column);
+
+        // Check for pawn promotion
+        if (chessGame.getBoard().getPiece(startPosition).getPieceType().equals(ChessPiece.PieceType.PAWN)) {
+            System.out.println("Attempt promotion (y/n): ");
+            if (scanner.nextLine().equalsIgnoreCase("y")) {
+                System.out.println("""
+                        Select promotion type:
+                        1. QUEEN
+                        2. BISHOP
+                        3. ROOK
+                        4. KNIGHT""");
+                pieceType = selectPromotion(scanner.nextInt());
+                scanner.nextLine();  // Consume the newline character after reading an integer
+
+                if (pieceType == null) {
+                    System.out.println("Invalid promotion type");
+                }
+            }
+        }
+
+        return new ChessMove(startPosition, endPosition, pieceType);
+    }
+    private ChessPiece.PieceType selectPromotion(int selection) {
+        return switch (selection) {
+            case 1 -> ChessPiece.PieceType.QUEEN;
+            case 2 -> ChessPiece.PieceType.BISHOP;
+            case 3 -> ChessPiece.PieceType.ROOK;
+            case 4 -> ChessPiece.PieceType.KNIGHT;
+            default -> null;
+        };
+    }
+
+
+    private void invalidInput(String message){
+        System.out.println(message);
     }
 
 
