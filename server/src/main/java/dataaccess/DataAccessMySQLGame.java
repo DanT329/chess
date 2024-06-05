@@ -142,10 +142,13 @@ public class DataAccessMySQLGame implements DataAccessGame {
 
     public String loadGame(int gameID) throws DataAccessException, SQLException {
         String query = "SELECT * FROM games WHERE gameID = ?";
-        try(Connection connection = DatabaseManager.getConnection()){
-            try(PreparedStatement statement = connection.prepareStatement(query)){
-                try(ResultSet resultSet = statement.executeQuery()){
-                    if(resultSet.next()){
+        try (Connection connection = DatabaseManager.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                // Set the parameter for the prepared statement
+                statement.setInt(1, gameID);
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
                         return resultSet.getString("game");
                     }
                 }
@@ -153,6 +156,7 @@ public class DataAccessMySQLGame implements DataAccessGame {
         }
         return null;
     }
+
 
     private final String[] createStatements = {
             """

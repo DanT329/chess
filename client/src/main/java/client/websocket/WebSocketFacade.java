@@ -1,6 +1,8 @@
 package client.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import model.UserData;
 import websocket.messages.*;
 import websocket.commands.*;
@@ -9,18 +11,20 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import chess.ChessGameDeserializer;
 import com.google.gson.Gson;
-
+import ui.UserInterfaceGameplay;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.function.Consumer;
 
 // Extend Endpoint for websocket to work properly
 public class WebSocketFacade extends Endpoint {
-
+    public ChessGame gameState;
     private Session session;
+    private Consumer<ChessGame> onGameStateChange; // Listener for game state changes
 
     public WebSocketFacade(String url) {
         try {
@@ -50,8 +54,10 @@ public class WebSocketFacade extends Endpoint {
 
     public void playGame(Integer gameID, String authToken) {
         try {
+            System.out.println("In playGame()");
             var action = new Connect(authToken, gameID);
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+            var gson = new Gson().toJson(action);
+            this.session.getBasicRemote().sendText(gson);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
@@ -59,8 +65,30 @@ public class WebSocketFacade extends Endpoint {
 
     private void handleIncomingMessage(String message) {
 
-        Notification notification = new Gson().fromJson(message, Notification.class);
-        NotificationHandler handler = new NotificationHandler();
-        handler.notify(notification);
+        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+        if(serverMessage.getServerMessageType().equals(ServerMessage.ServerMessageType.NOTIFICATION)){
+            Notification notification = new Gson().fromJson(message, Notification.class);
+            NotificationHandler handler = new NotificationHandler();
+            handler.notify(notification);
+        }else if (serverMessage.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)) {
+            if (message != null) {
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(ChessGame.class, new ChessGameDeserializer())
+                        .create();
+                gameState = gson.fromJson(message, ChessGame.class);
+                if (onGameStateChange != null) {
+                    onGameStateChange.accept(gameState); // Notify listener of game state change
+                }
+            } else {
+                gameState = null;
+            }
+        }
+    }
+    public void setOnGameStateChange(Consumer<ChessGame> listener) {
+        this.onGameStateChange = listener; // Set listener for game state changes
+    }
+
+    public ChessGame getGameState() {
+        return gameState; // Getter for game state
     }
 }
