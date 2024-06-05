@@ -43,6 +43,7 @@ public class ConnectionManager {
                     // Send LOAD_GAME message to all users
                     System.out.println("LOAD_GAME");
                     if (connection.session.isOpen()) {
+                        System.out.println(notificationMessage);
                         connection.send(notificationMessage);
                     }
                 } else {

@@ -64,18 +64,23 @@ public class WebSocketFacade extends Endpoint {
     }
 
     private void handleIncomingMessage(String message) {
-
+        System.out.println("In handleIncomingMessage()");
         ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+        System.out.println(serverMessage);
         if(serverMessage.getServerMessageType().equals(ServerMessage.ServerMessageType.NOTIFICATION)){
             Notification notification = new Gson().fromJson(message, Notification.class);
             NotificationHandler handler = new NotificationHandler();
             handler.notify(notification);
         }else if (serverMessage.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)) {
-            if (message != null) {
+            System.out.println("Load game");
+            LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
+            System.out.println(loadGame.getGame());
+            if (loadGame.getGame() != null) {
                 Gson gson = new GsonBuilder()
                         .registerTypeAdapter(ChessGame.class, new ChessGameDeserializer())
                         .create();
-                gameState = gson.fromJson(message, ChessGame.class);
+                gameState = gson.fromJson(loadGame.getGame(), ChessGame.class);
+                System.out.println(gameState);
                 if (onGameStateChange != null) {
                     onGameStateChange.accept(gameState); // Notify listener of game state change
                 }
