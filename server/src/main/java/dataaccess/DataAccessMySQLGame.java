@@ -144,17 +144,26 @@ public class DataAccessMySQLGame implements DataAccessGame {
         String query = "SELECT * FROM games WHERE gameID = ?";
         try (Connection connection = DatabaseManager.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(query)) {
-                // Set the parameter for the prepared statement
                 statement.setInt(1, gameID);
-
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        return resultSet.getString("game");
+                        String gameState = resultSet.getString("game");
+                        if (gameState != null) {
+                            return gameState;
+                        } else {
+                            ChessGame newGame = new ChessGame();  // Create a new ChessGame instance
+                            Gson gson = new Gson();
+                            String serializedGame = gson.toJson(newGame);
+                            pushGame(gameID, serializedGame);  // Save the new game state to the database
+                            return serializedGame;
+                        }
+                    } else {
+                        // Handle case where no game with the given gameID exists
+                        throw new SQLException("No game found with gameID: " + gameID);
                     }
                 }
             }
         }
-        return null;
     }
 
     public void pushGame(int gameID, String newGameState) throws DataAccessException, SQLException {
