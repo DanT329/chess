@@ -43,13 +43,15 @@ public class UserInterfaceGameplay {
             switch (input.toLowerCase()) {
                 case "make move":
                     makeMove(scanner);
-                    printBoard(chessGame.getBoard(), isWhite);
                     break;
                 case "quit":
                     System.out.println("Quitting the game...");
                     return; // Exit the method, effectively ending the game loop
                 case "help":
                     printHelp();
+                    break;
+                case "redraw":
+                    printBoard(chessGame.getBoard(),isWhite);
                     break;
                 default:
                     System.out.println("Unknown command. Type 'Help' for a list of commands.");
@@ -77,7 +79,7 @@ public class UserInterfaceGameplay {
         String startPosition = scanner.nextLine();
         System.out.println("Select end position (e.g., 2A): ");
         String endPosition = scanner.nextLine();
-
+        System.out.println(chessGame.getBoard().toString());
         ChessMove playerMove = convertMoveInput(startPosition, endPosition, scanner);
 
         try {
@@ -88,7 +90,24 @@ public class UserInterfaceGameplay {
         }
     }
 
-    private void sendMove(ChessMove move){
+    private void sendMove(ChessMove move) throws InvalidMoveException {
+
+
+        ChessGame newGame = new ChessGame();
+        ChessBoard newChessboard = new ChessBoard();
+        newChessboard.addPiece(new ChessPosition(2,1),new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.PAWN));
+        newGame.setBoard(newChessboard);
+        newGame.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(3,1),null));
+
+
+        System.out.println("Print empty board");
+        System.out.println(new Gson().toJson(newGame));
+        ChessGame newGameTwo = getDaGame(new Gson().toJson(newGame));
+        System.out.println(new Gson().toJson(newGameTwo));
+        printBoard(newGameTwo.getBoard(),isWhite);
+
+
+
         var gsonGame = new Gson().toJson(chessGame);
         webSocketFacade.moveGame(gameID,authToken,gsonGame,move);
     }
@@ -200,6 +219,23 @@ public class UserInterfaceGameplay {
             pieceRepresentation = EscapeSequences.EMPTY;
         }
         return pieceRepresentation;
+    }
+
+    private ChessGame getDaGame(String gameInstance){
+        if(gameInstance != null){
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(ChessGame.class, new ChessGameDeserializer())
+                    .create();
+            return gson.fromJson(gameInstance, ChessGame.class);
+        }
+        return null;
+    }
+
+    private String serializeGame(ChessGame game){
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(ChessGame.class, new ChessGameSerializer());
+        Gson gson = gsonBuilder.create();
+        return gson.toJson(chessGame);
     }
 }
 

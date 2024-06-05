@@ -17,6 +17,9 @@ public class ChessGameDeserializer implements JsonDeserializer<ChessGame> {
             game.setTeamTurn(teamTurn);
         }
 
+        // Clear the board before deserializing
+        game.getBoard().clearBoard();
+
         // Deserialize the nested 'board' object
         JsonObject boardObject = jsonObject.getAsJsonObject("board").getAsJsonObject("board");
         for (Map.Entry<String, JsonElement> entry : boardObject.entrySet()) {
@@ -31,4 +34,5 @@ public class ChessGameDeserializer implements JsonDeserializer<ChessGame> {
         return game;
     }
 }
+
 

@@ -60,6 +60,10 @@ public class ChessBoard {
         return new ChessBoard(this);
     }
 
+    public void clearBoard(){
+        this.board.clear();
+    }
+
 
     /**
      * Sets the board to the default starting board
