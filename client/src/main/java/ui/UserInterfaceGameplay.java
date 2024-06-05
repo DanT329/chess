@@ -73,21 +73,24 @@ public class UserInterfaceGameplay {
     }
 
     private void makeMove(Scanner scanner) {
-        // Prompt the user for the start and end positions
         System.out.println("Select start position (e.g., 1A): ");
         String startPosition = scanner.nextLine();
         System.out.println("Select end position (e.g., 2A): ");
         String endPosition = scanner.nextLine();
 
-        // Convert input to a ChessMove
         ChessMove playerMove = convertMoveInput(startPosition, endPosition, scanner);
 
-        // Attempt to make the move in the chess game
         try {
             chessGame.makeMove(playerMove);
+            sendMove(playerMove);
         } catch (InvalidMoveException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private void sendMove(ChessMove move){
+        var gsonGame = new Gson().toJson(chessGame);
+        webSocketFacade.moveGame(gameID,authToken,gsonGame,move);
     }
 
     private ChessMove convertMoveInput(String start, String end, Scanner scanner) {

@@ -172,6 +172,7 @@ public class DataAccessMySQLGame implements DataAccessGame {
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, newGameState);
                 statement.setInt(2, gameID);
+                statement.executeUpdate();
             }
         }
     }

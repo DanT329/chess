@@ -1,6 +1,7 @@
 package client.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.UserData;
@@ -60,6 +61,16 @@ public class WebSocketFacade extends Endpoint {
             this.session.getBasicRemote().sendText(gson);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+        }
+    }
+
+    public void moveGame(Integer gameID, String authToken, String gameState, ChessMove move){
+        try{
+            var action = new MakeMove(authToken,move,gameState,gameID);
+            var gson = new Gson().toJson(action);
+            this.session.getBasicRemote().sendText(gson);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 
