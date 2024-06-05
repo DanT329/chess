@@ -123,12 +123,12 @@ public class DataAccessMySQLGame implements DataAccessGame {
                         String blackPlayer = resultSet.getString("blackusername");
                         String gameInstance = resultSet.getString("game");
                         ChessGame gameInfo = null;
-                        if(gameInstance != null){
-                            Gson gson = new GsonBuilder()
-                                    .registerTypeAdapter(ChessGame.class, new ChessGameDeserializer())
-                                    .create();
-                            gameInfo = gson.fromJson(gameInstance, ChessGame.class);
-                        }
+                        //if(gameInstance != null){
+                           // Gson gson = new GsonBuilder()
+                            //        .registerTypeAdapter(ChessGame.class, new ChessGameDeserializer())
+                             //       .create();
+                            //gameInfo = gson.fromJson(gameInstance, ChessGame.class);
+                        //}
 
                         gameList.add(new GameData(gameID,whitePlayer,blackPlayer,gamename,gameInfo));
                     }
@@ -186,7 +186,7 @@ public class DataAccessMySQLGame implements DataAccessGame {
               `whiteUsername` VARCHAR(255),
               `blackUsername` VARCHAR(255),
               `gameName` VARCHAR(255),
-              `game` VARCHAR(255)
+              `game` LONGTEXT
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
