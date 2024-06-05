@@ -157,6 +157,17 @@ public class DataAccessMySQLGame implements DataAccessGame {
         return null;
     }
 
+    public void pushGame(int gameID, String newGameState) throws DataAccessException, SQLException {
+        String query = "UPDATE games SET game = ? WHERE gameID = ?";
+        try (Connection connection = DatabaseManager.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, newGameState);
+                statement.setInt(2, gameID);
+            }
+        }
+    }
+
+
 
     private final String[] createStatements = {
             """
