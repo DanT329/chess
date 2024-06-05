@@ -54,14 +54,13 @@ public class WebSocketHandler {
     }
 
     private void makeMove(String authToken, Integer gameID, Session session,String gameState, ChessMove move) throws IOException, DataAccessException{
-        System.out.println("In makeMove");
         String userName = dataAccess.verifyToken(authToken).username();
         try{
             dataAccessGame.pushGame(gameID,gameState);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        var message = String.format("%s Made Move: ", move);
+        var message = String.format("Made Move:%s ", move);
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(gameID, userName, notification);
         try{loadGame(authToken,gameID,session);}catch(SQLException e){

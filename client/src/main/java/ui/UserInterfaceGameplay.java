@@ -13,7 +13,6 @@ public class UserInterfaceGameplay {
     private final String authToken;
     private WebSocketFacade webSocketFacade;
     private ChessGame chessGame;
-    private ChessBoard chessBoard;
     private final Integer gameID;
     private final boolean isWhite;
 
@@ -72,6 +71,7 @@ public class UserInterfaceGameplay {
         this.chessGame = newGameState;
         System.out.println("Game state updated!");
         printBoard(chessGame.getBoard(), isWhite);
+        System.out.print("[IN GAME] >> ");
     }
 
     private void makeMove(Scanner scanner) {
@@ -91,23 +91,6 @@ public class UserInterfaceGameplay {
     }
 
     private void sendMove(ChessMove move) throws InvalidMoveException {
-
-
-        ChessGame newGame = new ChessGame();
-        ChessBoard newChessboard = new ChessBoard();
-        newChessboard.addPiece(new ChessPosition(2,1),new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.PAWN));
-        newGame.setBoard(newChessboard);
-        newGame.makeMove(new ChessMove(new ChessPosition(2,1),new ChessPosition(3,1),null));
-
-
-        System.out.println("Print empty board");
-        System.out.println(new Gson().toJson(newGame));
-        ChessGame newGameTwo = getDaGame(new Gson().toJson(newGame));
-        System.out.println(new Gson().toJson(newGameTwo));
-        printBoard(newGameTwo.getBoard(),isWhite);
-
-
-
         var gsonGame = new Gson().toJson(chessGame);
         webSocketFacade.moveGame(gameID,authToken,gsonGame,move);
     }
@@ -229,13 +212,6 @@ public class UserInterfaceGameplay {
             return gson.fromJson(gameInstance, ChessGame.class);
         }
         return null;
-    }
-
-    private String serializeGame(ChessGame game){
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(ChessGame.class, new ChessGameSerializer());
-        Gson gson = gsonBuilder.create();
-        return gson.toJson(chessGame);
     }
 }
 

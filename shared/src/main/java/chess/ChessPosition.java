@@ -50,4 +50,9 @@ public class ChessPosition {
     public String toString() {
         return row + "," + col;
     }
+
+    public String toChessNotation() {
+        char colChar = (char) ('A' + col - 1);
+        return row + String.valueOf(colChar);
+    }
 }
