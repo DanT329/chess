@@ -75,19 +75,24 @@ public class UserInterfaceGameplay {
     }
 
     private void makeMove(Scanner scanner) {
-        System.out.println("Select start position (e.g., 1A): ");
-        String startPosition = scanner.nextLine();
-        System.out.println("Select end position (e.g., 2A): ");
-        String endPosition = scanner.nextLine();
-        System.out.println(chessGame.getBoard().toString());
-        ChessMove playerMove = convertMoveInput(startPosition, endPosition, scanner);
+        if(chessGame.getTeamTurn().equals(ChessGame.TeamColor.WHITE) == isWhite){
+            System.out.println("Select start position (e.g., 1A): ");
+            String startPosition = scanner.nextLine();
+            System.out.println("Select end position (e.g., 2A): ");
+            String endPosition = scanner.nextLine();
+            System.out.println(chessGame.getBoard().toString());
+            ChessMove playerMove = convertMoveInput(startPosition, endPosition, scanner);
 
-        try {
-            chessGame.makeMove(playerMove);
-            sendMove(playerMove);
-        } catch (InvalidMoveException e) {
-            System.out.println(e.getMessage());
+            try {
+                chessGame.makeMove(playerMove);
+                sendMove(playerMove);
+            } catch (InvalidMoveException e) {
+                System.out.println(e.getMessage());
+            }
+        }else{
+            System.out.println("Not Your Turn");
         }
+
     }
 
     private void sendMove(ChessMove move) throws InvalidMoveException {

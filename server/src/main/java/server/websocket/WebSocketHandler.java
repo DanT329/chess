@@ -60,7 +60,7 @@ public class WebSocketHandler {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        var message = String.format("Made Move:%s ", move);
+        var message = String.format("Other Player Made Move:%s ", move);
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(gameID, userName, notification);
         try{loadGame(authToken,gameID,session);}catch(SQLException e){
