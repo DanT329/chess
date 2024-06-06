@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import dataaccess.DataAccessMySQLGame;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -65,8 +66,9 @@ public class WebSocketHandler {
         connections.broadcast(gameID, userName, notification);
     }
 
-    private void makeMove(String authToken, Integer gameID, Session session,String gameState, ChessMove move) throws IOException, DataAccessException, SQLException {
+    private void makeMove(String authToken, Integer gameID, Session session,String gameState, ChessMove move) throws IOException, DataAccessException, SQLException, InvalidMoveException {
         String userName = dataAccess.verifyToken(authToken).username();
+        badMoveCheck(userName,gameID,move);
         try{
             dataAccessGame.pushGame(gameID,gameState);
         } catch (SQLException e) {
@@ -76,6 +78,24 @@ public class WebSocketHandler {
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(gameID, userName,notification);
         loadGameAll(authToken,gameID,session);
+    }
+
+    private void badMoveCheck(String username, Integer gameID,ChessMove move) throws InvalidMoveException {
+        GameData gameData = dataAccessGame.getGameByID(gameID);
+        ChessGame.TeamColor playerColor;
+        if(gameData.whiteUsername().equals(username)){
+            playerColor = ChessGame.TeamColor.WHITE;
+        }else if(gameData.blackUsername().equals(username)){
+            playerColor = ChessGame.TeamColor.BLACK;
+        }else{
+            throw new InvalidMoveException();
+        }
+        ChessBoard board = gameData.game().getBoard();
+        gameData.game().makeMove(move);
+
+        if(!board.getPiece(move.getStartPosition()).getTeamColor().equals(playerColor)){
+            throw new InvalidMoveException();
+        }
     }
 
     private void loadGameAll(String authToken, Integer gameID, Session session) throws IOException, DataAccessException, SQLException {
