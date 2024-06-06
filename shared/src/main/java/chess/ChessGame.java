@@ -111,7 +111,7 @@ public class ChessGame {
                     return;
                 }
             }
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Can't Make That Move");
 
         }
 

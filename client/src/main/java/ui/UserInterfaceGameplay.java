@@ -80,19 +80,21 @@ public class UserInterfaceGameplay {
             String startPosition = scanner.nextLine();
             System.out.println("Select end position (e.g., 2A): ");
             String endPosition = scanner.nextLine();
-            System.out.println(chessGame.getBoard().toString());
-            ChessMove playerMove = convertMoveInput(startPosition, endPosition, scanner);
-
-            try {
-                chessGame.makeMove(playerMove);
-                sendMove(playerMove);
-            } catch (InvalidMoveException e) {
-                System.out.println(e.getMessage());
+            if(isValidPosition(startPosition) && isValidPosition(endPosition)){
+                ChessMove playerMove = convertMoveInput(startPosition, endPosition, scanner);
+                try {
+                    chessGame.makeMove(playerMove);
+                    sendMove(playerMove);
+                } catch (InvalidMoveException e) {
+                    System.out.println(e.getMessage());
+                }
+            }else{
+                System.out.println("Invalid Input");
             }
+
         }else{
             System.out.println("Not Your Turn");
         }
-
     }
 
     private void sendMove(ChessMove move) throws InvalidMoveException {
@@ -114,7 +116,7 @@ public class UserInterfaceGameplay {
         ChessPosition endPosition = new ChessPosition(row, column);
 
         // Check for pawn promotion
-        if (chessGame.getBoard().getPiece(startPosition).getPieceType().equals(ChessPiece.PieceType.PAWN)) {
+        if (chessGame.getBoard().getPiece(startPosition)!= null && chessGame.getBoard().getPiece(startPosition).getPieceType().equals(ChessPiece.PieceType.PAWN)) {
             System.out.println("Attempt promotion (y/n): ");
             if (scanner.nextLine().equalsIgnoreCase("y")) {
                 System.out.println("""
@@ -134,6 +136,7 @@ public class UserInterfaceGameplay {
 
         return new ChessMove(startPosition, endPosition, pieceType);
     }
+
     private ChessPiece.PieceType selectPromotion(int selection) {
         return switch (selection) {
             case 1 -> ChessPiece.PieceType.QUEEN;
@@ -144,7 +147,14 @@ public class UserInterfaceGameplay {
         };
     }
 
+    private boolean isValidPosition(String position) {
+        if (position.length() != 2) return false;
 
+        char row = position.charAt(0);
+        char col = position.charAt(1);
+
+        return (row >= '1' && row <= '8') && (col >= 'A' && col <= 'H');
+    }
     private void invalidInput(String message){
         System.out.println(message);
     }
