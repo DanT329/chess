@@ -271,10 +271,10 @@ public class UserInterfaceGameplay {
         int rowIncrement = isWhitePerspective ? -1 : 1;
         int colIncrement = isWhitePerspective ? 1 : -1;
 
-        if (isWhitePerspective) {
-            System.out.println("   A   B   C   D   E   F   G   H");
-        } else {
-            System.out.println("   H   G   F   E   D   C   B   A");
+        if(isWhitePerspective){
+            System.out.println("   A\u2003 B   C\u2003 D\u2003 E\u2003 F\u2003 G\u2003 H");
+        }else{
+            System.out.println("   H\u2003 G   F\u2003 E\u2003 D\u2003 C\u2003 B\u2003 A");
         }
 
         for (int row = startRow; isWhitePerspective ? row >= endRow : row <= endRow; row += rowIncrement) {
@@ -299,10 +299,10 @@ public class UserInterfaceGameplay {
             System.out.println();
         }
 
-        if (isWhitePerspective) {
-            System.out.println("   A   B   C   D   E   F   G   H");
-        } else {
-            System.out.println("   H   G   F   E   D   C   B   A");
+        if(isWhitePerspective){
+            System.out.println("   A\u2003 B   C\u2003 D\u2003 E\u2003 F\u2003 G\u2003 H");
+        }else{
+            System.out.println("   H\u2003 G   F\u2003 E\u2003 D\u2003 C\u2003 B\u2003 A");
         }
     }
 

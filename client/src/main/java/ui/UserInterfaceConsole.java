@@ -112,9 +112,6 @@ public class UserInterfaceConsole {
                 } else {
                     try {
                         serverFacade.joinGame(new GameJoinUser(color, currentGames.get(gameNumber).gameID(), authToken));
-                        //ChessBoard board = new ChessBoard();
-                        //board.resetBoard();
-                        //printBoard(board, color.equals("WHITE"));
                         UserInterfaceGameplay gamePlay = new UserInterfaceGameplay(authToken,new WebSocketFacade("http://localhost:8080"),currentGames.get(gameNumber).gameID(),color.equals("WHITE"));
                         gamePlay.run(scanner);
                     } catch(IOException | URISyntaxException e) {

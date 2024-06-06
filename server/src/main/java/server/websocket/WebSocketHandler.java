@@ -29,7 +29,7 @@ public class WebSocketHandler {
             switch (action.getCommandType()) {
                 case CONNECT -> {
                     Connect connectAction = new Gson().fromJson(message, Connect.class);
-                    connect(connectAction.getAuthString(), connectAction.getGameID(), session);
+                    connect(connectAction.getAuthString(), connectAction.getGameID(), session,connectAction.getIsObserver());
                 }
                 case MAKE_MOVE -> {
                     MakeMove makeMoveAction = new Gson().fromJson(message, MakeMove.class);
@@ -96,10 +96,20 @@ public class WebSocketHandler {
         dataAccessGame.removeUserFromGame(gameID,userName);
         connections.broadcast(gameID, userName, notification);
     }
-    private void connect(String authToken, Integer gameID, Session session) throws IOException, DataAccessException, SQLException {
+    private void connect(String authToken, Integer gameID, Session session,boolean isObserver) throws IOException, DataAccessException, SQLException {
         String userName = dataAccess.verifyToken(authToken).username();
         connections.add(gameID, userName, session);
-        var message = String.format("%s joined the game!", userName);
+        GameData gameData = dataAccessGame.getGameByID(gameID);
+        String message = "Error: Can't see who username is!";
+
+        if(isObserver){
+            message = String.format("%s joined the game as observer!", userName);
+        }else if(gameData.whiteUsername().equals(userName)){
+            message = String.format("%s joined the game as WHITE!", userName);
+        }else if(gameData.blackUsername().equals(userName)){
+            message = String.format("%s joined the game as BLACK!", userName);
+        }
+
         loadGame(authToken,gameID,session);
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(gameID, userName, notification);
