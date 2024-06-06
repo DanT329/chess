@@ -52,9 +52,10 @@ public class WebSocketFacade extends Endpoint {
         // You can perform any setup here if needed
     }
 
-    public void playGame(Integer gameID, String authToken) {
+    public void playGame(Integer gameID, String authToken,boolean isObserver) {
         try {
             var action = new Connect(authToken, gameID);
+            action.setIsObserver(isObserver);
             var gson = new Gson().toJson(action);
             this.session.getBasicRemote().sendText(gson);
         } catch (IOException ex) {

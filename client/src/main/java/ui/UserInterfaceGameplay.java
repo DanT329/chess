@@ -29,7 +29,7 @@ public class UserInterfaceGameplay {
 
     public void run(Scanner scanner) {
 
-        webSocketFacade.playGame(gameID, authToken);
+        webSocketFacade.playGame(gameID, authToken,false);
         try {
             Thread.sleep(1000); // 1000 milliseconds delay
         } catch (InterruptedException e) {

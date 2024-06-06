@@ -134,19 +134,20 @@ public class WebSocketHandler {
         GameData gameData = dataAccessGame.getGameByID(gameID);
         ChessGame game = gameData.game();
         String message = null;
-        if(game.isInCheck(ChessGame.TeamColor.WHITE)){
-            message = "White is in check!";
-        }else if(game.isInCheck(ChessGame.TeamColor.BLACK)){
-            message = "Black is in check!";
-        }else if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
+        if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
             message = "White is in checkmate!";
-        }else if(game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+        } else if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
             message = "Black is in checkmate!";
-        }else if(game.isInStalemate(ChessGame.TeamColor.WHITE)){
+        } else if (game.isInStalemate(ChessGame.TeamColor.WHITE)) {
             message = "White is in stalemate!";
-        }else if(game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+        } else if (game.isInStalemate(ChessGame.TeamColor.BLACK)) {
             message = "Black is in stalemate!";
+        } else if (game.isInCheck(ChessGame.TeamColor.WHITE)) {
+            message = "White is in check!";
+        } else if (game.isInCheck(ChessGame.TeamColor.BLACK)) {
+            message = "Black is in check!";
         }
+
         if(message != null){
             var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcastAll(gameID,notification);

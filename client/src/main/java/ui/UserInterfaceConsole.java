@@ -91,7 +91,7 @@ public class UserInterfaceConsole {
                 playGame(scanner);
             }
             else if(input.equals("Observe Game") && loggedIn){
-                observeGame();
+                observeGame(scanner);
             }else{
                 System.out.println("Invalid input");
             }
@@ -127,11 +127,26 @@ public class UserInterfaceConsole {
             System.out.println("Invalid input. Please enter a valid integer.");
         }
     }
-    private void observeGame(){
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        printBoard(board, true);
-        printBoard(board, false);
+    private void observeGame(Scanner scanner){
+        System.out.print("Enter a game number >> ");
+        if (scanner.hasNextInt()) {
+            int gameNumber = scanner.nextInt();
+            scanner.nextLine();
+            System.out.print("Enter a color perspective >> ");
+            String color = scanner.nextLine().toUpperCase();
+
+            if(currentGames.containsKey(gameNumber)){
+                UserInterfaceObserver observer = new UserInterfaceObserver(authToken,new WebSocketFacade("http://localhost:8080"),currentGames.get(gameNumber).gameID(),color.equals("WHITE"));
+                observer.run(scanner);
+            }else{
+                System.out.println("Invalid game number.");
+            }
+
+        }else{
+            System.out.println("Invalid input. Please enter a valid integer.");
+        }
+
+
     }
     private boolean checkActiveGame(Integer gameNumber, String color) throws NullPointerException {
         if (!currentGames.containsKey(gameNumber)) {
