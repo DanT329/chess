@@ -59,10 +59,15 @@ public class WebSocketHandler {
 
         GameData gameData = dataAccessGame.getGameByID(gameID);
         ChessGame game = gameData.game();
+
         if(!game.getGameUp()){
             throw new InvalidMoveException("Game already resigned by player");
         }
+
+        //Not observer
         isPlayer(userName,gameID);
+
+        //Set new gamestate to over
         game.setGameUp(false);
         var gson = new Gson().toJson(game);
         dataAccessGame.pushGame(gameID,gson);

@@ -97,6 +97,7 @@ public class UserInterfaceGameplay {
                 ChessMove playerMove = convertMoveInput(startPosition, endPosition, scanner);
                 try {
                     chessGame.makeMove(playerMove);
+                    checkStatus();
                     sendMove(playerMove);
                 } catch (InvalidMoveException e) {
                     System.out.println(e.getMessage());
@@ -110,6 +111,14 @@ public class UserInterfaceGameplay {
         }
     }
 
+    private void checkStatus(){
+        if(chessGame.isInCheckmate(ChessGame.TeamColor.WHITE) || chessGame.isInCheckmate(ChessGame.TeamColor.BLACK)){
+            chessGame.setGameUp(false);
+        }else if(chessGame.isInStalemate(ChessGame.TeamColor.WHITE) || chessGame.isInStalemate(ChessGame.TeamColor.BLACK)){
+            chessGame.setGameUp(false);
+        }
+
+    }
     private void sendMove(ChessMove move) throws InvalidMoveException {
         var gsonGame = new Gson().toJson(chessGame);
         webSocketFacade.moveGame(gameID,authToken,gsonGame,move);
