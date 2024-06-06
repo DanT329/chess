@@ -11,13 +11,6 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import com.google.gson.Gson;
-import ui.UserInterfaceGameplay;
-import javax.websocket.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.function.Consumer;
 
 // Extend Endpoint for websocket to work properly
@@ -93,15 +86,6 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void errorSend(Integer gameID, String authToken){
-        try{
-            var action = new ErrorSub(authToken);
-            var gson = new Gson().toJson(action);
-            this.session.getBasicRemote().sendText(gson);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private void handleIncomingMessage(String message) {
         ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
