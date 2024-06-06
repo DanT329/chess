@@ -40,8 +40,6 @@ public class ConnectionManager {
 
             for (Connection connection : connections) {
                 if (notification.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)) {
-                    // Send LOAD_GAME message to all users
-
                     if (connection.session.isOpen() && connection.userName.equals(excludeVisitorName)) {
                         connection.send(notificationMessage);
                     }
@@ -54,5 +52,19 @@ public class ConnectionManager {
             }
         }
     }
+
+    public void broadcastAll(int gameID, ServerMessage notification) throws IOException {
+        List<Connection> connections = gameConnections.get(gameID);
+        if (connections != null) {
+            String notificationMessage = new Gson().toJson(notification);
+
+            for (Connection connection : connections) {
+                if (connection.session.isOpen()) {
+                    connection.send(notificationMessage);
+                }
+            }
+        }
+    }
+
 
 }

@@ -15,7 +15,7 @@ public class UserInterfaceGameplay {
     private ChessGame chessGame;
     private final Integer gameID;
     private final boolean isWhite;
-
+    private boolean gameAvtive = true;
     public UserInterfaceGameplay(String authToken, WebSocketFacade webSocketFacade, Integer gameID, boolean isWhite) {
         this.authToken = authToken;
         this.webSocketFacade = webSocketFacade;
@@ -56,6 +56,9 @@ public class UserInterfaceGameplay {
                     webSocketFacade.leaveGame(gameID,authToken);
                     System.out.println("Leaving Game...");
                     return;
+                case "resign":
+
+                    return;
                 default:
                     System.out.println("Unknown command. Type 'Help' for a list of commands.");
                     break;
@@ -73,7 +76,12 @@ public class UserInterfaceGameplay {
     private void leaveGame(Integer gameID,String authToken){
         webSocketFacade.leaveGame(gameID,authToken);
     }
+    private void resignGame(Scanner scanner){
+        System.out.println("Are you sure you want to resign?");
+        if(scanner.nextLine().equals("yes")){
 
+        }
+    }
     private void updateGameState(ChessGame newGameState) {
         this.chessGame = newGameState;
         System.out.println("Game state updated!");
@@ -162,10 +170,6 @@ public class UserInterfaceGameplay {
 
         return (row >= '1' && row <= '8') && (col >= 'A' && col <= 'H');
     }
-    private void invalidInput(String message){
-        System.out.println(message);
-    }
-
 
     private void printBoard(ChessBoard board, boolean isWhitePerspective) {
         int startRow = isWhitePerspective ? 8 : 1;
@@ -224,16 +228,6 @@ public class UserInterfaceGameplay {
             pieceRepresentation = EscapeSequences.EMPTY;
         }
         return pieceRepresentation;
-    }
-
-    private ChessGame getDaGame(String gameInstance){
-        if(gameInstance != null){
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(ChessGame.class, new ChessGameDeserializer())
-                    .create();
-            return gson.fromJson(gameInstance, ChessGame.class);
-        }
-        return null;
     }
 }
 
