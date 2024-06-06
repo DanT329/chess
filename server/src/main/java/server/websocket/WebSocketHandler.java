@@ -126,12 +126,6 @@ public class WebSocketHandler {
         var gson = new Gson().toJson(game);
         dataAccessGame.pushGame(gameID,gson);
 
-        //try{
-         //   dataAccessGame.pushGame(gameID,gameState);
-       // } catch (SQLException e) {
-        //    throw new RuntimeException(e);
-        //}
-
         var message = String.format("%s Made Move:%s ", move,userName);
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(gameID, userName,notification);
