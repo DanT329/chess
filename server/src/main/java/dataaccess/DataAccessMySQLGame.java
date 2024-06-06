@@ -208,6 +208,36 @@ public class DataAccessMySQLGame implements DataAccessGame {
     }
 
 
+    public GameData getGameByID(int gameID) {
+        String query = "SELECT * FROM games WHERE gameID = ?";
+        try (Connection connection = DatabaseManager.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, gameID);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        String gamename = resultSet.getString("gamename");
+                        String whitePlayer = resultSet.getString("whiteusername");
+                        String blackPlayer = resultSet.getString("blackusername");
+                        String gameInstance = resultSet.getString("game");
+                        ChessGame gameInfo = null;
+                        if (gameInstance != null) {
+                            Gson gson = new GsonBuilder()
+                                    .registerTypeAdapter(ChessGame.class, new ChessGameDeserializer())
+                                    .create();
+                            gameInfo = gson.fromJson(gameInstance, ChessGame.class);
+                        }
+                        return new GameData(gameID, whitePlayer, blackPlayer, gamename, gameInfo);
+                    }
+                    return null;
+                }
+            }
+        } catch (SQLException | DataAccessException e) {
+            return null;
+        }
+    }
+
+
+
 
 
     private final String[] createStatements = {
