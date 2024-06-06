@@ -22,7 +22,7 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException, DataAccessException {
-        System.out.println("In onMessage()");
+
         UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
         switch (action.getCommandType()) {
             case CONNECT -> {
@@ -40,7 +40,6 @@ public class WebSocketHandler {
             }
             // Handle other cases like MAKE_MOVE, LEAVE, RESIGN here
         }
-        System.out.println("Missed case");
     }
 
     private void leave(String authToken, Integer gameID) throws DataAccessException, IOException {
@@ -69,7 +68,7 @@ public class WebSocketHandler {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        var message = String.format("Other Player Made Move:%s ", move);
+        var message = String.format("%s Made Move:%s ", move,userName);
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(gameID, userName, notification);
         try{loadGame(authToken,gameID,session);}catch(SQLException e){
@@ -78,11 +77,9 @@ public class WebSocketHandler {
     }
 
     private void loadGame(String authToken, Integer gameID, Session session) throws IOException, DataAccessException, SQLException {
-        System.out.println("In loadGame()");
         String userName = dataAccess.verifyToken(authToken).username();
         String game = dataAccessGame.loadGame(gameID);
         var notification = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,game);
-        System.out.println(game);
         connections.broadcast(gameID, userName, notification);
     }
 
