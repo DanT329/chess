@@ -104,10 +104,12 @@ public class UserInterfaceGameplay {
                     System.out.println(e.getMessage());
                 }
             }else{
+                webSocketFacade.errorSend(gameID,authToken);
                 System.out.println("Invalid Input");
             }
 
         }else{
+            webSocketFacade.errorSend(gameID,authToken);
             System.out.println("Not Your Turn");
         }
     }
@@ -144,6 +146,7 @@ public class UserInterfaceGameplay {
                 scanner.nextLine();  // Consume the newline character after reading an integer
 
                 if (pieceType == null) {
+                    webSocketFacade.errorSend(gameID,authToken);
                     System.out.println("Invalid promotion type");
                 }
             }

@@ -39,7 +39,11 @@ public class WebSocketHandler {
                     Leave leaveAction = new Gson().fromJson(message, Leave.class);
                     leave(leaveAction.getAuthString(), leaveAction.getGameID());
                 }
-                case ERROR_SUB ->{
+                case RESIGN -> {
+                    Resign resignAction = new Gson().fromJson(message, Resign.class);
+                    resign(resignAction.getAuthString(), resignAction.getGameID(), session);
+                }
+                case ERROR_SUB -> {
                     sendError(new Exception(),session);
                 }
                 // Handle other cases here
@@ -49,6 +53,35 @@ public class WebSocketHandler {
         }
     }
 
+    private void resign(String authToken, Integer gameID,Session session) throws DataAccessException, IOException, SQLException, InvalidMoveException {
+        String userName = dataAccess.verifyToken(authToken).username();
+        isPlayer(userName,gameID);
+
+        GameData gameData = dataAccessGame.getGameByID(gameID);
+        ChessGame game = gameData.game();
+        if(!game.getGameUp()){
+            throw new InvalidMoveException("Game already resigned by player");
+        }
+        game.setGameUp(false);
+        var gson = new Gson().toJson(game);
+        dataAccessGame.pushGame(gameID,gson);
+
+        var message = String.format("%s has resigned from the game!", userName);
+        var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcastAll(gameID, notification);
+    }
+
+    private void isPlayer(String username,Integer gameID) throws InvalidMoveException {
+        GameData gameData = dataAccessGame.getGameByID(gameID);
+        ChessGame.TeamColor playerColor;
+        if(gameData.whiteUsername().equals(username)){
+            playerColor = ChessGame.TeamColor.WHITE;
+        }else if(gameData.blackUsername().equals(username)){
+            playerColor = ChessGame.TeamColor.BLACK;
+        }else{
+            throw new InvalidMoveException();
+        }
+    }
     private void leave(String authToken, Integer gameID) throws DataAccessException, IOException {
         String userName = dataAccess.verifyToken(authToken).username();
         connections.remove(gameID,userName);
