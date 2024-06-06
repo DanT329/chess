@@ -48,6 +48,7 @@ public class WebSocketHandler {
         connections.remove(gameID,userName);
         var message = String.format("%s has left the game!", userName);
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        dataAccessGame.removeUserFromGame(gameID,userName);
         connections.broadcast(gameID, userName, notification);
     }
     private void connect(String authToken, Integer gameID, Session session) throws IOException, DataAccessException{

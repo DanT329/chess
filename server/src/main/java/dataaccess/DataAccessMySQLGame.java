@@ -176,6 +176,38 @@ public class DataAccessMySQLGame implements DataAccessGame {
         }
     }
 
+    public void removeUserFromGame(int gameID, String username) throws DataAccessException{
+        String query = "SELECT * FROM games WHERE gameID = ?";
+        try (Connection connection = DatabaseManager.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, gameID);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        String whitePlayer = resultSet.getString("whiteusername");
+                        String blackPlayer = resultSet.getString("blackusername");
+                        if (username.equals(whitePlayer)) {
+                            String whiteQuery = "UPDATE games SET whiteusername = NULL WHERE gameID = ?";
+                            removeUser(whiteQuery, connection, gameID);
+                        } else if (username.equals(blackPlayer)) {
+                            String blackQuery = "UPDATE games SET blackusername = NULL WHERE gameID = ?";
+                            removeUser(blackQuery, connection, gameID);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Data Access Error");
+        }
+    }
+
+    private void removeUser(String query, Connection connection, int gameID) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, gameID);
+            statement.executeUpdate();
+        }
+    }
+
+
 
 
     private final String[] createStatements = {
