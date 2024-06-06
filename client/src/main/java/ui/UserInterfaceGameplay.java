@@ -52,6 +52,10 @@ public class UserInterfaceGameplay {
                 case "redraw":
                     printBoard(chessGame.getBoard(),isWhite);
                     break;
+                case "leave":
+                    webSocketFacade.leaveGame(gameID,authToken);
+                    System.out.println("Leaving Game...");
+                    return;
                 default:
                     System.out.println("Unknown command. Type 'Help' for a list of commands.");
                     break;
@@ -65,6 +69,9 @@ public class UserInterfaceGameplay {
         System.out.println("- Make Move: To make a move in the game.");
         System.out.println("- Quit: To exit the game.");
         System.out.println("- Help: To display this help message.");
+    }
+    private void leaveGame(Integer gameID,String authToken){
+        webSocketFacade.leaveGame(gameID,authToken);
     }
 
     private void updateGameState(ChessGame newGameState) {

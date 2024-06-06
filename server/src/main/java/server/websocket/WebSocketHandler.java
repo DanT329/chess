@@ -31,18 +31,26 @@ public class WebSocketHandler {
             }
             case MAKE_MOVE -> {
                 MakeMove makeMoveAction = new Gson().fromJson(message,MakeMove.class);
-                System.out.println("MAKEMOVEACTION GAMESTATE");
-                System.out.println(makeMoveAction.getGameState());
                 makeMove(makeMoveAction.getAuthString(),makeMoveAction.getGameID(),session,makeMoveAction.getGameState(),makeMoveAction.getMove());
 
+            }
+            case LEAVE -> {
+                Leave leaveAction = new Gson().fromJson(message,Leave.class);
+                leave(leaveAction.getAuthString(),leaveAction.getGameID());
             }
             // Handle other cases like MAKE_MOVE, LEAVE, RESIGN here
         }
         System.out.println("Missed case");
     }
 
+    private void leave(String authToken, Integer gameID) throws DataAccessException, IOException {
+        String userName = dataAccess.verifyToken(authToken).username();
+        connections.remove(gameID,userName);
+        var message = String.format("%s has left the game!", userName);
+        var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(gameID, userName, notification);
+    }
     private void connect(String authToken, Integer gameID, Session session) throws IOException, DataAccessException{
-        System.out.println("In connect");
         String userName = dataAccess.verifyToken(authToken).username();
         connections.add(gameID, userName, session);
         var message = String.format("%s joined the game!", userName);
