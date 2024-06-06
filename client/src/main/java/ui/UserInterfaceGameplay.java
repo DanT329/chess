@@ -72,6 +72,7 @@ public class UserInterfaceGameplay {
         System.out.println("- Redraw: To reprint gameboard.");
         System.out.println("- Resign: To resign game but not leave.");
         System.out.println("- Leave: To leave game.");
+        System.out.println("- Highlight Moves: Highlight a piece's moves.");
         System.out.println("- Help: To display this help message.");
     }
 
