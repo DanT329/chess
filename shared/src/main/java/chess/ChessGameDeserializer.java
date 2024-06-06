@@ -17,6 +17,13 @@ public class ChessGameDeserializer implements JsonDeserializer<ChessGame> {
             game.setTeamTurn(teamTurn);
         }
 
+        // Deserialize the 'gameUp' field
+        JsonElement gameUpElement = jsonObject.get("gameUp");
+        if (gameUpElement != null) {
+            boolean gameUp = context.deserialize(gameUpElement, Boolean.class);
+            game.setGameUp(gameUp);  // Assuming you have a setter for this field
+        }
+
         // Clear the board before deserializing
         game.getBoard().clearBoard();
 

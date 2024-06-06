@@ -15,6 +15,7 @@ public class ChessGame {
     //Game starts with white
     private TeamColor teamTurn = TeamColor.WHITE;
     private ChessBoard board = new ChessBoard();
+    private boolean gameUp = true;
 
     public ChessGame() {
         board.resetBoard();
@@ -42,6 +43,14 @@ public class ChessGame {
     public enum TeamColor {
         WHITE,
         BLACK
+    }
+
+    public boolean getGameUp(){
+        return  gameUp;
+    }
+
+    public void setGameUp(boolean status){
+        gameUp = status;
     }
 
     /**
@@ -81,7 +90,9 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
-
+        if(!gameUp){
+            throw new InvalidMoveException("Game is over");
+        }
         if(!board.getBoard().containsKey(move.getStartPosition())){
             throw new InvalidMoveException("No piece at position");
         }
