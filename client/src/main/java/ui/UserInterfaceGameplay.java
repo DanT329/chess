@@ -43,9 +43,6 @@ public class UserInterfaceGameplay {
                 case "make move":
                     makeMove(scanner);
                     break;
-                case "quit":
-                    System.out.println("Quitting the game...");
-                    return; // Exit the method, effectively ending the game loop
                 case "help":
                     printHelp();
                     break;
@@ -57,8 +54,8 @@ public class UserInterfaceGameplay {
                     System.out.println("Leaving Game...");
                     return;
                 case "resign":
-
-                    return;
+                    resignGame(scanner);
+                    break;
                 default:
                     System.out.println("Unknown command. Type 'Help' for a list of commands.");
                     break;
@@ -70,16 +67,17 @@ public class UserInterfaceGameplay {
     private void printHelp() {
         System.out.println("Available commands:");
         System.out.println("- Make Move: To make a move in the game.");
-        System.out.println("- Quit: To exit the game.");
+        System.out.println("- Redraw: To reprint gameboard.");
+        System.out.println("- Resign: To resign game but not leave.");
+        System.out.println("- Leave: To leave game.");
         System.out.println("- Help: To display this help message.");
     }
-    private void leaveGame(Integer gameID,String authToken){
-        webSocketFacade.leaveGame(gameID,authToken);
-    }
-    private void resignGame(Scanner scanner){
-        System.out.println("Are you sure you want to resign?");
-        if(scanner.nextLine().equals("yes")){
 
+    private void resignGame(Scanner scanner){
+        System.out.println("Are you sure you want to resign? yes/no: ");
+        if(scanner.nextLine().equals("yes")){
+            chessGame.setGameUp(false);
+            webSocketFacade.resignGame(gameID,authToken);
         }
     }
     private void updateGameState(ChessGame newGameState) {
@@ -104,12 +102,10 @@ public class UserInterfaceGameplay {
                     System.out.println(e.getMessage());
                 }
             }else{
-                webSocketFacade.errorSend(gameID,authToken);
                 System.out.println("Invalid Input");
             }
 
         }else{
-            webSocketFacade.errorSend(gameID,authToken);
             System.out.println("Not Your Turn");
         }
     }
@@ -146,7 +142,6 @@ public class UserInterfaceGameplay {
                 scanner.nextLine();  // Consume the newline character after reading an integer
 
                 if (pieceType == null) {
-                    webSocketFacade.errorSend(gameID,authToken);
                     System.out.println("Invalid promotion type");
                 }
             }

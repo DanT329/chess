@@ -82,6 +82,16 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
+    public void resignGame(Integer gameID, String authToken){
+        try{
+            var action = new Resign(authToken,gameID);
+            var gson = new Gson().toJson(action);
+            this.session.getBasicRemote().sendText(gson);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void errorSend(Integer gameID, String authToken){
         try{
             var action = new ErrorSub(authToken);
@@ -98,6 +108,7 @@ public class WebSocketFacade extends Endpoint {
             Notification notification = new Gson().fromJson(message, Notification.class);
             NotificationHandler handler = new NotificationHandler();
             handler.notify(notification);
+            System.out.print("[IN GAME] >> ");
         }else if (serverMessage.getServerMessageType().equals(ServerMessage.ServerMessageType.LOAD_GAME)) {
             LoadGame loadGame = new Gson().fromJson(message, LoadGame.class);
             if (loadGame.getGame() != null) {
@@ -111,6 +122,11 @@ public class WebSocketFacade extends Endpoint {
             } else {
                 gameState = null;
             }
+        }else if(serverMessage.getServerMessageType().equals(ServerMessage.ServerMessageType.ERROR)){
+            ErrorNotification notification = new Gson().fromJson(message, ErrorNotification.class);
+            ErrorHandler handler = new ErrorHandler();
+            handler.notify(notification);
+            System.out.print("[IN GAME] >> ");
         }
     }
     public void setOnGameStateChange(Consumer<ChessGame> listener) {

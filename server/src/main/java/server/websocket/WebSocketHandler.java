@@ -55,13 +55,14 @@ public class WebSocketHandler {
 
     private void resign(String authToken, Integer gameID,Session session) throws DataAccessException, IOException, SQLException, InvalidMoveException {
         String userName = dataAccess.verifyToken(authToken).username();
-        isPlayer(userName,gameID);
+
 
         GameData gameData = dataAccessGame.getGameByID(gameID);
         ChessGame game = gameData.game();
         if(!game.getGameUp()){
             throw new InvalidMoveException("Game already resigned by player");
         }
+        isPlayer(userName,gameID);
         game.setGameUp(false);
         var gson = new Gson().toJson(game);
         dataAccessGame.pushGame(gameID,gson);
@@ -111,6 +112,31 @@ public class WebSocketHandler {
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(gameID, userName,notification);
         loadGameAll(authToken,gameID,session);
+        checkState(gameID,authToken,session,userName);
+    }
+
+    private void checkState(Integer gameID,String authToken,Session session, String userName) throws IOException, SQLException, DataAccessException {
+        GameData gameData = dataAccessGame.getGameByID(gameID);
+        ChessGame game = gameData.game();
+        String message = null;
+        if(game.isInCheck(ChessGame.TeamColor.WHITE)){
+            message = "White is in check!";
+        }else if(game.isInCheck(ChessGame.TeamColor.BLACK)){
+            message = "Black is in check!";
+        }else if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
+            message = "White is in checkmate!";
+        }else if(game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+            message = "Black is in checkmate!";
+        }else if(game.isInStalemate(ChessGame.TeamColor.WHITE)){
+            message = "White is in stalemate!";
+        }else if(game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+            message = "Black is in stalemate!";
+        }
+        if(message != null){
+            var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcastAll(gameID,notification);
+        }
+
     }
 
     private void badMoveCheck(String username, Integer gameID,ChessMove move) throws InvalidMoveException {

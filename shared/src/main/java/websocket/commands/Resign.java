@@ -1,20 +1,16 @@
 package websocket.commands;
 
-import chess.ChessGame;
 
 public class Resign extends UserGameCommand{
     private final Integer gameID;
-    private final String gameState;
-    public Resign(String authToken, Integer gameID, String gameState) {
+
+    public Resign(String authToken, Integer gameID) {
         super(authToken);
         this.gameID = gameID;
-        this.gameState = gameState;
+        this.commandType = CommandType.RESIGN;
     }
     public Integer getGameID(){
         return gameID;
     }
 
-    public  String getGameState(){
-        return gameState;
-    }
 }
